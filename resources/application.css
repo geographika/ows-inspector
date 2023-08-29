@@ -1,0 +1,26 @@
+/**
+    Make button text smaller and not in bold. Original:
+    font: normal 12px/14px helvetica, arial, verdana, sans-serif !important;
+*/
+
+.x-btn-inner-default-toolbar-medium {
+    font: normal 12px/14px "Fira Mono", helvetica, arial, verdana, sans-serif !important;
+}
+
+.x-tab-inner-default {
+    font: normal 12px/14px "Fira Mono", helvetica, arial, verdana, sans-serif !important;
+}
+
+/**
+fixed fieldset for latest Chrome
+https://stackoverflow.com/questions/64915750/problem-fieldset-label-not-visible-with-sencha-extjs-7-x-on-chrome-87-0-4280-67
+*/
+
+.x-fieldset-header,
+.x-fieldset-header .x-tool-tool-el {
+    overflow: unset !important;
+}
+
+.x-btn-default-small {
+    padding: 2px;
+}
