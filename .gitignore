@@ -1,0 +1,8 @@
+/build
+bootstrap.*
+classic.json*
+modern.json*
+.sencha
+.vs
+node_modules
+/ext

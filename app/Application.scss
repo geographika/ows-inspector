@@ -1,0 +1,22 @@
+/*
+ *  This file can be used to set variables and supply global styling.  View specific 
+ *  styling should be located the view's corresponding scss file.
+ */
+
+$enable-font-awesome: dynamic(true);
+
+$font-size: dynamic(12px);
+
+$form-field-padding: dynamic(2px 6px 1px);
+$form-field-height: dynamic(22px);
+$form-item-margin-bottom: dynamic(5px);
+
+/*.x-btn-default-small {
+    padding: 2px;
+}
+*/
+
+// Override the hard-coded values in cpsi-mapview
+.x-form-trigger-spinner-default, .x-form-spinner-default {
+    width: 20px !important;
+}
