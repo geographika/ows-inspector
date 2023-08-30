@@ -96,6 +96,16 @@
     -->
 
   <target name="-after-build">
+    <copy todir="${build.dir}/node_modules/ace-builds/src-min">
+      <fileset dir="${app.dir}/node_modules/ace-builds/src-min">
+        <include name="mode-json.js"/>
+      </fileset>
+    </copy>
+    <copy todir="${build.dir}/node_modules/ol/dist">
+      <fileset dir="${app.dir}/node_modules/ol/dist">
+        <include name="ol.js.map"/>
+      </fileset>
+    </copy>
     <!--<copy todir="${build.dir}">
           <fileset dir="${app.dir}">
               <include name="favicon.ico"/>

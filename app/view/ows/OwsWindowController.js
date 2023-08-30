@@ -286,7 +286,8 @@ Ext.define('OwsInspector.view.ows.WxsWindowController', {
                 var responseType = response.headers.get('content-type');
                 return response.text().then(responseText => ({ responseType, responseText }));
             })
-            .then(({ responseType, responseText }) => {
+            .then(result => {
+                const { responseType, responseText } = result;
                 if (responseType.includes('xml')) {
                     me.setEditorVisibilites('#xml');
                     me.setupXmlEditor();

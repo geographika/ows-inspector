@@ -24,7 +24,19 @@ eslint app --fix
 # npm install
 
 # to build a production build
+# cd $PROJECT_PATH
 # sencha app build production
+# cd D:\GitHub\ows-inspector\build\production\OwsInspector
+# C:\Python310\python -m http.server 8000
+
+# and a test build
+# cd $PROJECT_PATH
+# sencha app build testing
+# cd D:\GitHub\ows-inspector\build\testing\OwsInspector
+# C:\Python310\python -m http.server 8001
+
+# [ERR] C2001: Closure Compiler Error (Parse error. invalid arrow function parameters) -- compression-input:180095:16
+# caused by using the following syntax:  .then(({ responseType, responseText })
 
 sencha app watch  --j2ee --port 3334
 # http://localhost:3334

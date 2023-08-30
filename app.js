@@ -14,5 +14,5 @@ Ext.application({
     ],
 
     // The name of the initial view to create.
-    // mainView: 'MapServerStudio.view.main.Main'
+    // mainView: 'OwsInspector.view.ows.WxsWindow'
 });

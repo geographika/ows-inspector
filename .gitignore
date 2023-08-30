@@ -6,3 +6,4 @@ modern.json*
 .vs
 node_modules
 /ext
+/*.log
