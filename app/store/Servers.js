@@ -10,7 +10,7 @@ Ext.define('OwsInspector.store.Servers', {
             type: 'string',
             depends: ['name', 'url'],
             convert: function (value, record) {
-                return `${record.get('name')} - ${record.get('url')}`
+                return `${record.get('name')} - ${record.get('url')}`;
             }
         }
     ],

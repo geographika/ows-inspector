@@ -63,7 +63,7 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
                 queryMode: 'local',
                 valueProperty: '{describeLayer.layers}', // a custom property added so the value binding can be set once the store is loaded
                 bind: {
-                    store: '{layerNames}',
+                    store: '{layers}',
                     //value: '{describeLayer.layers}', // due to errors we bind this manually in the controller
                     disabled: '{describeLayerDisabled}'
                 }
@@ -106,7 +106,7 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
                 displayField: 'value',
                 valueProperty: '{getMap.layers}', // a custom property added so the value binding can be set once the store is loaded
                 bind: {
-                    store: '{layerNames}',
+                    store: '{layers}',
                     //value: '{getMap.layers}', // due to errors we bind this manually in the controller
                     disabled: '{getMapDisabled}'
                 }
@@ -147,9 +147,12 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
                 editable: true, // allow users to enter other formats
                 fieldLabel: 'Format',
                 bind: {
-                    store: '{formats}',
+                    store: '{getMapFormats}',
                     value: '{getMap.format}',
                     disabled: '{getMapDisabled}'
+                },
+                listeners: {
+                    render: 'onComboRender'
                 }
             },
             {
@@ -199,7 +202,7 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
             valueField: 'value',
             queryMode: 'local',
             bind: {
-                store: '{layerNames}',
+                store: '{layers}',
                 value: '{getLegendGraphic.layer}',
                 disabled: '{getLegendGraphicDisabled}'
             }
@@ -209,9 +212,12 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
             editable: true, // allow users to enter other formats
             fieldLabel: 'Format',
             bind: {
-                store: '{formats}',
+                store: '{getLegendGraphicFormats}',
                 value: '{getLegendGraphic.format}',
                 disabled: '{getLegendGraphicDisabled}'
+            },
+            listeners: {
+                render: 'onComboRender'
             }
         }, {
             xtype: 'combo',
@@ -240,7 +246,7 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
             displayField: 'value',
             valueProperty: '{getStyles.layers}', // a custom property added so the value binding can be set once the store is loaded
             bind: {
-                store: '{layerNames}',
+                store: '{layers}',
                 //value: '{getStyles.layers}', // due to errors we bind this manually in the controller
                 disabled: '{getStylesDisabled}'
             }
@@ -249,6 +255,7 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
     {
         xtype: 'fieldset',
         title: 'GetFeatureInfo',
+        hidden: true,
         collapsible: true,
         bind: {
             collapsed: '{getFeatureInfoDisabled}'
@@ -261,7 +268,7 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
             displayField: 'value',
             valueProperty: '{getStyles.layers}', // a custom property added so the value binding can be set once the store is loaded
             bind: {
-                store: '{layerNames}',
+                store: '{layers}',
                 //value: '{getStyles.layers}', // due to errors we bind this manually in the controller
                 disabled: '{getStylesDisabled}'
             }

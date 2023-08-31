@@ -8,11 +8,13 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelModel', {
     data: {
 
         // for drop-down values
-        formats: ['image/png', 'image/jpeg'],
+        getMapFormats: ['image/png', 'image/jpeg'],
+        getLegendGraphicFormats: ['image/png', 'image/jpeg'],
+
         exceptions: ['XML', 'INIMAGE', 'BLANK'],
         sldVersions: ['1.0.0', '1.1.0'],
         serviceVersions: ['1.0.0', '1.1.0', '1.1.1', '1.3.0'],
-        requests: ['GetCapabilities', 'DescribeLayer', 'GetLegendGraphic', 'GetStyles', 'GetMap', 'GetFeatureInfo'],
+        requests: ['GetCapabilities', 'DescribeLayer', 'GetLegendGraphic', 'GetStyles', 'GetMap'], // 'GetFeatureInfo'
         projections: ['EPSG:3857'],
 
         // parameters used by all services
@@ -27,11 +29,11 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelModel', {
         describeLayer: {
             layers: '',
             sld_version: '',
-            exceptions: 'xml'
+            exceptions: ''
         },
         getLegendGraphic: {
             layer: '',
-            format: 'image/png', // default to PNG
+            format: '',
             sld_version: '',
         },
         getStyles: {
@@ -40,11 +42,11 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelModel', {
         getMap: {
             layers: '',
             styles: '',
-            crs: 'EPSG:3857',
-            srs: 'EPSG:3857',
-            bbox: '-25304964.300801154,-20037508.3427892,25304964.300801154,20037508.3427892',
-            format: 'image/png', // default to PNG
-            exceptions: 'INIMAGE',
+            crs: '',
+            srs: '',
+            bbox: '',
+            format: '',
+            exceptions: '',
             width: 500,
             height: 500,
             transparent: true
@@ -64,7 +66,7 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelModel', {
     },
 
     stores: {
-        layerNames: {
+        layers: {
             type: 'layers',
             data: [{ value: 'Example' }],
         }

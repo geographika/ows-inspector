@@ -46,6 +46,13 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
                             if (newValue) {
                                 textfield.setValue(newValue.trim());
                             }
+                        },
+                        render: function (combo) {
+                            // open drop-down list on click
+                            // this is not required if forceSelection is true
+                            combo.getEl().on('click', function () {
+                                combo.expand();
+                            });
                         }
                     }
                 }],
@@ -93,7 +100,7 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
                 html: `<h2>Welcome to the Open Web Services Inspector!</h2>
                 <ol>
                 <li>Select or enter a "Server URL" - the server must use <b>https</b></li>
-                <li>Click "Send Request" to load the capabilities from the server</li>
+                <li>Click "Send Request" to load the capabilities from the server into the UI</li>
                 <li>Try other OwS requests!</li>
                 </ol>
                 `,
@@ -174,17 +181,20 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
         {
             xtype: 'button',
             text: 'Reset',
-            handler: 'onReset'
+            handler: 'onReset',
+            scale: 'large'
         },
         {
             xtype: 'button',
             text: 'Send Request',
-            handler: 'onSendRequest'
+            handler: 'onSendRequest',
+            scale: 'large'
         },
         {
             xtype: 'button',
             text: 'Close',
             handler: 'onClose',
+            scale: 'large',
             bind: {
                 hidden: '{!isFloatingWindow}'
             }
