@@ -12,8 +12,12 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
     title: 'Open Web Services Inspector',
     width: 800,
     height: 600,
-    maximizable: true,
-    closeAction: 'hide',
+    maximizable: false,
+    closable: false,
+    //bind: {
+    //    closable: '{isFloatingWindow}',
+    //},
+    //closeAction: 'hide',
     layout: 'border',
     items: [
         {
@@ -24,7 +28,6 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
                 type: 'hbox',
             },
             items: [
-
                 {
                     xtype: 'combo',
                     forceSelection: false,
@@ -32,22 +35,19 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
                     fieldLabel: 'Server URL',
                     emptyText: 'To test against different servers enter the root URL here',
                     flex: 1,
+                    valueField: 'url',
+                    displayField: 'displayName',
                     bind: {
-                        store: '{serverUrls}',
+                        store: '{servers}',
                         value: '{mapserverUrl}'
                     },
                     listeners: {
                         change: function (textfield, newValue) {
-                            textfield.setValue(newValue.trim());
+                            if (newValue) {
+                                textfield.setValue(newValue.trim());
+                            }
                         }
                     }
-                },
-                {
-                    xtype: 'button',
-                    width: 150,
-                    text: 'Update Capabilities',
-                    handler: 'onUpdateCapabilities',
-                    margin: '0 0 0 5' // Add some margin to separate the button from the textbox
                 }],
         },
         {
@@ -79,7 +79,7 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
                     listeners: {
                         parametersupdated: 'onParametersUpdated'
                     },
-                    hidden: false
+                    hidden: true
                 }]
         },
         {
@@ -88,6 +88,27 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
             itemId: 'center',
             layout: 'fit',
             items: [{
+                xtype: 'container',
+                itemId: 'blank',
+                html: `<h2>Welcome to the Open Web Services Inspector!</h2>
+                <ol>
+                <li>Select or enter a "Server URL" - the server must use <b>https</b></li>
+                <li>Click "Send Request" to load the capabilities from the server</li>
+                <li>Try other OwS requests!</li>
+                </ol>
+                `,
+                style: {
+                    backgroundColor: '#F5F5F5',
+                    padding: '10px',
+                    color: 'black',
+                    fontSize: 'large',
+                    //backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),url(/resources/images/watermark.png)',
+                    backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),url(/resources/images/vector_tiles.png)',
+                    //backgroundSize: 'cover',
+                    backgroundSize: 'contain',
+                    backgroundRepeat: 'no-repeat'
+                },
+            }, {
                 xtype: 'container',
                 itemId: 'xml',
                 html: '<div id="xmlEditor" style="width: 100%; height: 100%" />',
@@ -152,12 +173,21 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
     buttons: [
         {
             xtype: 'button',
+            text: 'Reset',
+            handler: 'onReset'
+        },
+        {
+            xtype: 'button',
             text: 'Send Request',
             handler: 'onSendRequest'
         },
         {
+            xtype: 'button',
             text: 'Close',
-            handler: 'onClose'
+            handler: 'onClose',
+            bind: {
+                hidden: '{!isFloatingWindow}'
+            }
         }
     ]
 });

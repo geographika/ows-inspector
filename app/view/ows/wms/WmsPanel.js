@@ -53,7 +53,7 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
                 xtype: 'multiselect',
                 name: 'layersCombo', // required for automatic updating
                 forceSelection: true,
-                editable: false,
+                editable: true,
                 fieldLabel: 'Layers (use CTRL to select many)',
                 valueField: 'value',
                 width: '90%',
@@ -101,16 +101,13 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
             {
                 xtype: 'multiselect',
                 name: 'layersCombo', // required for automatic updating
-                forceSelection: true,
-                editable: false,
                 fieldLabel: 'Layers (use CTRL to select many)',
                 valueField: 'value',
                 displayField: 'value',
-                queryMode: 'local',
                 valueProperty: '{getMap.layers}', // a custom property added so the value binding can be set once the store is loaded
                 bind: {
                     store: '{layerNames}',
-                    // value: '{getMap.layers}', // due to errors we bind this manually in the controller
+                    //value: '{getMap.layers}', // due to errors we bind this manually in the controller
                     disabled: '{getMapDisabled}'
                 }
             },
@@ -121,7 +118,8 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
                 bind: {
                     store: '{projections}',
                     value: '{getMap.crs}',
-                    hidden: '{!useSrs}'
+                    hidden: '{!useSrs}',
+                    disabled: '{getMapDisabled}'
                 }
             },
             {
@@ -131,7 +129,8 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
                 bind: {
                     store: '{projections}',
                     value: '{getMap.srs}',
-                    hidden: '{useSrs}'
+                    hidden: '{useSrs}',
+                    disabled: '{getMapDisabled}'
                 }
             },
             {
@@ -236,12 +235,9 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
         items: [{
             xtype: 'multiselect',
             name: 'layersCombo', // required for automatic updating
-            forceSelection: true,
-            editable: false,
             fieldLabel: 'Layers (use CTRL to select many)',
             valueField: 'value',
             displayField: 'value',
-            queryMode: 'local',
             valueProperty: '{getStyles.layers}', // a custom property added so the value binding can be set once the store is loaded
             bind: {
                 store: '{layerNames}',
@@ -260,12 +256,9 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
         items: [{
             xtype: 'multiselect',
             name: 'layersCombo', // required for automatic updating
-            forceSelection: true,
-            editable: false,
             fieldLabel: 'Layers (use CTRL to select many)',
             valueField: 'value',
             displayField: 'value',
-            queryMode: 'local',
             valueProperty: '{getStyles.layers}', // a custom property added so the value binding can be set once the store is loaded
             bind: {
                 store: '{layerNames}',

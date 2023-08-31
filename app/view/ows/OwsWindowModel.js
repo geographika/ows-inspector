@@ -3,13 +3,18 @@ Ext.define('OwsInspector.view.ows.OwsWindowModel', {
 
     alias: 'viewmodel.ms_owswindow',
 
+    requires: ['OwsInspector.store.Servers'],
+
     data: {
-        serverUrls: [
-            'https://demo.mapserver.org/cgi-bin/msautotest',
-            'https://ows-demo.terrestris.de/geoserver/osm/ows',
-            'https://demo.mapserver.org/cgi-bin/wms'],
         mapserverUrl: 'https://demo.mapserver.org/cgi-bin/wms',
-        requestUrl: ''
+        requestUrl: '',
+        isFloatingWindow: false
+    },
+
+    stores: {
+        servers: {
+            type: 'servers'
+        }
     },
 
     // https://demo.mapserver.org/cgi-bin/umn

@@ -95,7 +95,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
     setEditorVisibilites: function (activeEditor) {
 
         const me = this;
-        const containerIds = ['#imageOutput', '#xml', '#json', '#html'];
+        const containerIds = ['#blank', '#imageOutput', '#xml', '#json', '#html'];
         var container;
 
         Ext.each(containerIds, function (id) {
@@ -106,6 +106,11 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
                 container.setVisible(false);
             }
         });
+    },
+
+    onReset: function () {
+        const me = this;
+        me.setEditorVisibilites('#blank');
     },
 
     updateWmsCapabilities: function (text) {
@@ -144,72 +149,6 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         // https://github.com/openlayers/openlayers/issues/8909
     },
 
-    /**
-     * Function to update the view models based on the response of a remote server
-     */
-    onUpdateCapabilities: function () {
-
-        const me = this;
-        const xType = me.getView().down('tabpanel').getActiveTab().xtype;
-        var params = {
-            request: 'GetCapabilities',
-        };
-
-        switch (xType) {
-
-            case 'ms_wmspanel':
-                params.service = 'WMS';
-                break;
-            case 'ms_wfspanel':
-                params.service = 'WFS';
-                break;
-            default:
-                console.log(`xType ${xType} unknown`);
-        }
-
-        const vm = me.getViewModel();
-        const mapserverUrl = vm.get('mapserverUrl');
-        const separator = mapserverUrl.indexOf('?') === -1 ? '?' : '&';
-        const queryString = Ext.Object.toQueryString(params);
-        const outputUrl = mapserverUrl + separator + queryString;
-
-        me.setEditorVisibilites('#json');
-        me.setupJsonEditor();
-        const doc = me.jsonEditor.getSession().doc;
-
-        const centerRegion = me.getView().down('#center');
-        centerRegion.mask('Sending request...');
-
-        fetch(outputUrl)
-            .then(function (response) {
-                return response.text();
-            })
-            .then(function (text) {
-
-                switch (xType) {
-
-                    case 'ms_wmspanel':
-                        params.service = 'WMS';
-                        me.updateWmsCapabilities(text);
-                        break;
-                    case 'ms_wfspanel':
-                        params.service = 'WFS';
-                        me.updateWfsCapabilities(text);
-                        break;
-                    default:
-                        console.log(`xType ${xType} unknown`);
-                }
-            })
-            .catch(error => {
-                // Handle errors
-                const decodedUrl = decodeURIComponent(outputUrl);
-                doc.setValue(`Unable to read capabilities from: ${decodedUrl} - ${error}`);
-            })
-            .finally(() => {
-                centerRegion.unmask();
-            });
-    },
-
     onParametersUpdated: function () {
 
         var me = this;
@@ -233,6 +172,11 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         }
 
         const mapserverUrl = me.getViewModel().get('mapserverUrl');
+
+        if (!mapserverUrl) {
+            return '';
+        }
+
         var queryString = Ext.Object.toQueryString(params);
 
         // Append the new parameters to the URL, with a ? or & as appropriate
@@ -275,6 +219,14 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
     sendRequest: function (outputUrl) {
 
         const me = this;
+
+        const mapserverUrl = me.getViewModel().get('mapserverUrl');
+        if (!mapserverUrl) {
+            // if there is no server url then display the default help HTML
+            me.setEditorVisibilites('#blank');
+            return;
+        }
+
         var imageContainer = me.getView().down('#imageOutput');
         var xmlContainer = me.getView().down('#xml');
 
@@ -288,6 +240,31 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
             })
             .then(result => {
                 const { responseType, responseText } = result;
+
+                // if a GetCapabilities request was called then we update the UI
+                // with settings from the server
+                const params = Ext.Object.fromQueryString(outputUrl);
+                const lowercaseParams = {};
+                Ext.Object.each(params, function (key, value) {
+                    lowercaseParams[key.toLowerCase()] = value.toLowerCase();
+                });
+
+                if (lowercaseParams.request === 'getcapabilities') {
+
+                    switch (lowercaseParams.service) {
+
+                        case 'wms':
+                            me.updateWmsCapabilities(responseText);
+                            break;
+                        case 'wfs':
+                            params.service = 'WFS';
+                            me.updateWfsCapabilities(responseText);
+                            break;
+                        default:
+                            console.log(`xType ${xType} unknown`);
+                    }
+                }
+
                 if (responseType.includes('xml')) {
                     me.setEditorVisibilites('#xml');
                     me.setupXmlEditor();

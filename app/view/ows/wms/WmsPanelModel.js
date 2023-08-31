@@ -65,7 +65,8 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelModel', {
 
     stores: {
         layerNames: {
-            type: 'layers'
+            type: 'layers',
+            data: [{ value: 'Example' }],
         }
     },
 
