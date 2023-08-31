@@ -9,7 +9,7 @@ Ext.define('OwsInspector.Application', {
     name: 'OwsInspector',
 
     requires: [
-        'OwsInspector.view.ows.WxsWindowModel'
+        'OwsInspector.view.ows.OwsWindowModel'
     ],
 
     quickTips: false,
@@ -30,7 +30,7 @@ Ext.define('OwsInspector.Application', {
     },
 
     launch: function () {
-        Ext.create('OwsInspector.view.ows.WxsWindow', {
+        Ext.create('OwsInspector.view.ows.OwsWindow', {
             maximized: true, // Set the maximized configuration
         }).show();
     },

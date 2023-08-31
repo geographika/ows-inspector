@@ -1,7 +1,7 @@
 /**
  * See also https://openlayers.org/en/latest/examples/wms-capabilities.html
  */
-Ext.define('OwsInspector.view.ows.WxsWindowController', {
+Ext.define('OwsInspector.view.ows.OwsWindowController', {
     extend: 'Ext.app.ViewController',
 
     alias: 'controller.ms_owswindow',

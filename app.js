@@ -14,5 +14,5 @@ Ext.application({
     ],
 
     // The name of the initial view to create.
-    // mainView: 'OwsInspector.view.ows.WxsWindow'
+    // mainView: 'OwsInspector.view.ows.OwsWindow'
 });

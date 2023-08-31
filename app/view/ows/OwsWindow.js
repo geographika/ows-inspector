@@ -1,8 +1,8 @@
-Ext.define('OwsInspector.view.ows.WxsWindow', {
+Ext.define('OwsInspector.view.ows.OwsWindow', {
     extend: 'Ext.window.Window',
     requires: [
-        'OwsInspector.view.ows.WxsWindowModel',
-        'OwsInspector.view.ows.WxsWindowController',
+        'OwsInspector.view.ows.OwsWindowModel',
+        'OwsInspector.view.ows.OwsWindowController',
         'OwsInspector.view.ows.wms.WmsPanel',
         'OwsInspector.view.ows.wfs.WfsPanel'
     ],

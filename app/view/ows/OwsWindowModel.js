@@ -1,4 +1,4 @@
-Ext.define('OwsInspector.view.ows.WxsWindowModel', {
+Ext.define('OwsInspector.view.ows.OwsWindowModel', {
     extend: 'Ext.app.ViewModel',
 
     alias: 'viewmodel.ms_owswindow',
@@ -8,9 +8,11 @@ Ext.define('OwsInspector.view.ows.WxsWindowModel', {
             'https://demo.mapserver.org/cgi-bin/msautotest',
             'https://ows-demo.terrestris.de/geoserver/osm/ows',
             'https://demo.mapserver.org/cgi-bin/wms'],
-        mapserverUrl: '',
+        mapserverUrl: 'https://demo.mapserver.org/cgi-bin/wms',
         requestUrl: ''
     },
+
+    // https://demo.mapserver.org/cgi-bin/umn
 
     formulas: {
         mapserverUrlChanged: {
