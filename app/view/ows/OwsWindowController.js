@@ -178,7 +178,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
                 //const container = me.getView().down(activeContainerId);
                 //const imageUrl = container.down('image').src;
-                //const lowercaseParams = me.queryStringToParams(imageUrl);
+                //const lowercaseParams = me.getQueryStringParamsFromUrl(imageUrl);
 
                 //if (lowercaseParams.format) {
                 //    var format = lowercaseParams.format;
@@ -277,7 +277,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
         if (newValue !== oldValue) {
 
-            // mark all requet types in italic ("disabled") if the server URL
+            // mark all request types in italic ("disabled") if the server URL
             // is changed
             const xType = me.getView().down('tabpanel').getActiveTab().xtype;
             const vm = me.getView().down(xType).getViewModel();
@@ -289,6 +289,9 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
                     record.set('disabled', true);
                 }
             });
+
+            // set the combobox back to GetCapabilities
+            vm.set('common.request', 'GetCapabilities');
 
             // ensure any URLs don't have spaces entered at the end
             if (newValue) {
@@ -304,14 +307,25 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         me.sendRequest(outputUrl);
     },
 
-    queryStringToParams: function (url) {
-        const params = Ext.Object.fromQueryString(url);
-        const lowercaseParams = {};
-        Ext.Object.each(params, function (key, value) {
-            lowercaseParams[key.toLowerCase()] = value.toLowerCase();
-        });
+    getQueryStringParamsFromUrl: function (url) {
 
-        return lowercaseParams;
+        var queryStringStart = url.indexOf('?');
+        var queryString;
+
+        if (queryStringStart !== -1) {
+            queryString = url.substring(queryStringStart + 1);
+        }
+
+        const lowerCaseParams = {};
+
+        if (queryString) {
+            const params = Ext.Object.fromQueryString(queryString);
+            Ext.Object.each(params, function (key, value) {
+                lowerCaseParams[key.toLowerCase()] = value.toLowerCase();
+            });
+
+        }
+        return lowerCaseParams;
     },
 
     sendRequest: function (outputUrl) {
@@ -342,10 +356,10 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
                 // if a GetCapabilities request was called then we update the UI
                 // with settings from the server
 
-                const lowercaseParams = me.queryStringToParams(outputUrl);
+                const lowerCaseParams = me.getQueryStringParamsFromUrl(outputUrl);
 
-                if (lowercaseParams.request === 'getcapabilities') {
-                    const service = lowercaseParams.service;
+                if (lowerCaseParams.request === 'getcapabilities') {
+                    const service = lowerCaseParams.service;
                     switch (service) {
 
                         case 'wms':
