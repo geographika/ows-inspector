@@ -1,7 +1,10 @@
 Ext.define('OwsInspector.view.ows.wms.WmsPanelModel', {
     extend: 'Ext.app.ViewModel',
 
-    requires: ['OwsInspector.store.Layers'],
+    requires: [
+        'OwsInspector.store.Layers',
+        'OwsInspector.store.Requests'
+    ],
 
     alias: 'viewmodel.ms_wmspanel',
 
@@ -10,11 +13,9 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelModel', {
         // for drop-down values
         getMapFormats: ['image/png', 'image/jpeg'],
         getLegendGraphicFormats: ['image/png', 'image/jpeg'],
-
         exceptions: ['XML', 'INIMAGE', 'BLANK'],
         sldVersions: ['1.0.0', '1.1.0'],
         serviceVersions: ['1.0.0', '1.1.0', '1.1.1', '1.3.0'],
-        requests: ['GetCapabilities', 'DescribeLayer', 'GetLegendGraphic', 'GetStyles', 'GetMap'], // 'GetFeatureInfo'
         projections: ['EPSG:3857'],
 
         // parameters used by all services
@@ -54,7 +55,7 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelModel', {
         getFeatureInfo: {
             layers: '',
             query_layers: '',
-            format: 'image/png', // default to PNG
+            format: '',
             styles: '',
             crs: 'EPSG:3857',
             bbox: '-25304964.300801154,-20037508.3427892,25304964.300801154,20037508.3427892',
@@ -69,6 +70,19 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelModel', {
         layers: {
             type: 'layers',
             data: [{ value: 'Example' }],
+        },
+        // all requests are disabled (shown in italics) until GetCapabilities is called
+        requests: {
+            type: 'requests',
+            data: [
+                { name: 'GetCapabilities', disabled: false },
+                { name: 'DescribeLayer', disabled: true },
+                { name: 'GetLegendGraphic', disabled: true },
+                { name: 'GetStyles', disabled: true },
+                { name: 'GetMap', disabled: true },
+                // TODO
+                // { name: 'GetFeatureInfo', disabled: true }
+            ],
         }
     },
 

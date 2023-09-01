@@ -8,7 +8,8 @@ Ext.define('OwsInspector.view.ows.OwsWindowModel', {
     data: {
         mapserverUrl: 'https://demo.mapserver.org/cgi-bin/wms',
         requestUrl: '',
-        isFloatingWindow: false
+        isFloatingWindow: false,
+        scale: 'medium' // small
     },
 
     stores: {

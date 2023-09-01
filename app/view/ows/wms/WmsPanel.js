@@ -35,6 +35,14 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
             forceSelection: true,
             editable: false,
             fieldLabel: 'Request',
+            valueField: 'name',
+            displayField: 'name',
+            listConfig: {
+                itemTpl: [
+                    '<div data-qtip="{[values.disabled ? "Call GetCapabilities before running other requests" : ""]}"',
+                    '  class="{[values.disabled ? "italic-text" : ""]}">{name}</div>'
+                ]
+            },
             bind: {
                 store: '{requests}',
                 value: '{common.request}'

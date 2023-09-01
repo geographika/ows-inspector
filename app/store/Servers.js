@@ -10,16 +10,20 @@ Ext.define('OwsInspector.store.Servers', {
             type: 'string',
             depends: ['name', 'url'],
             convert: function (value, record) {
-                return `${record.get('name')} - ${record.get('url')}`;
+                if (!record.id) {
+                    return record.get('url');
+                }
+                else {
+                    return `${record.get('name')} - ${record.get('url')}`;
+                }
             }
         }
     ],
     data: [
         { name: 'MapServer Demo Server', url: 'https://demo.mapserver.org/cgi-bin/wms' },
         { name: 'MapServer msautotest', url: 'https://demo.mapserver.org/cgi-bin/msautotest' },
-        { name: 'EPA Ireland WMS', url: 'https://gis.epa.ie/geoserver/wms?' },
-        { name: 'EPA Ireland WFS', url: 'https://gis.epa.ie/geoserver/wfs?' },
-        { name: 'European Marine Observation and Data Network Bathymetry', url: 'https://ows.emodnet-bathymetry.eu/' },
+        { name: 'EPA Ireland', url: 'https://gis.epa.ie/geoserver/ows' },
+        { name: 'European Marine Observation and Data Network Bathymetry WMS', url: 'https://ows.emodnet-bathymetry.eu/wms' },
         { name: 'Terrestris OWS Demo', url: 'https://ows-demo.terrestris.de/geoserver/osm/ows' },
     ],
     // sorters: ['name']

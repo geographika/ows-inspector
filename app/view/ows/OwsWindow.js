@@ -42,11 +42,7 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
                         value: '{mapserverUrl}'
                     },
                     listeners: {
-                        change: function (textfield, newValue) {
-                            if (newValue) {
-                                textfield.setValue(newValue.trim());
-                            }
-                        },
+                        change: 'onServerChange',
                         render: function (combo) {
                             // open drop-down list on click
                             // this is not required if forceSelection is true
@@ -180,23 +176,37 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
     buttons: [
         {
             xtype: 'button',
-            text: 'Reset',
-            handler: 'onReset',
-            scale: 'large'
+            text: 'Help',
+            handler: 'onHelp',
+            bind: {
+                scale: '{scale}'
+            }
         },
+        '->',
+        {
+            xtype: 'button',
+            text: 'Save Output',
+            handler: 'onSave',
+            bind: {
+                scale: '{scale}'
+            }
+        },
+
         {
             xtype: 'button',
             text: 'Send Request',
             handler: 'onSendRequest',
-            scale: 'large'
+            bind: {
+                scale: '{scale}'
+            }
         },
         {
             xtype: 'button',
             text: 'Close',
             handler: 'onClose',
-            scale: 'large',
             bind: {
-                hidden: '{!isFloatingWindow}'
+                hidden: '{!isFloatingWindow}',
+                scale: '{scale}'
             }
         }
     ]

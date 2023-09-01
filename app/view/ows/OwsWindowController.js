@@ -10,6 +10,8 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
     jsonEditor: null,
     htmlEditor: null,
 
+    editorContainerIds: ['#blank', '#imageOutput', '#xml', '#json', '#html'],
+
     onClose: function () {
         var me = this;
         me.getView().close();
@@ -95,10 +97,9 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
     setEditorVisibilites: function (activeEditor) {
 
         const me = this;
-        const containerIds = ['#blank', '#imageOutput', '#xml', '#json', '#html'];
         var container;
 
-        Ext.each(containerIds, function (id) {
+        Ext.each(me.editorContainerIds, function (id) {
             container = me.getView().down(id);
             if (activeEditor === id) {
                 container.setVisible(true);
@@ -108,83 +109,100 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         });
     },
 
-    onReset: function () {
+    getActiveContainerId: function () {
+
+        const me = this;
+        var container;
+        var activeContainerId;
+
+        Ext.each(me.editorContainerIds, function (id) {
+            container = me.getView().down(id);
+            if (container.isVisible() === true) {
+                activeContainerId = id;
+                return;
+            }
+        });
+
+        return activeContainerId;
+    },
+
+    onHelp: function () {
         const me = this;
         me.setEditorVisibilites('#blank');
     },
 
-    updateWmsCapabilities: function (text) {
+    downloadFile: function (filename, content) {
+
+        var element = document.createElement('a');
+        element.setAttribute('href', content);
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+
+    },
+
+    onSave: function () {
         const me = this;
 
-        const parser = new ol.format.WMSCapabilities();
-        const result = parser.read(text);
-        const vm = me.getView().down('ms_wmspanel').getViewModel();
-        const layerStore = vm.getStore('layers');
+        const activeContainerId = me.getActiveContainerId();
 
-        var layers = Ext.Array.pluck(result.Capability.Layer.Layer, 'Name');
-
-        // Convert the flat array into an array of objects with 'name' field
-        var dataArrayWithFields = layers.map(function (item) {
-            return { value: item };
-        });
-
-        layerStore.loadData(dataArrayWithFields);
-        // TODO select all layers afterwards?
-
-        // load all formats
-        const getMapFormats = result.Capability.Request.GetMap.Format;
-        vm.set('getMapFormats', getMapFormats);
-
-        if (getMapFormats.length > 0) {
-            vm.set('getMap.format', getMapFormats[0]);
+        if (!activeContainerId) {
+            return;
         }
 
-        // GetLegendGraphic not included in parser!
-        // https://github.com/openlayers/openlayers/blob/8fbf00459802703352ce4edecb38775398fad9de/src/ol/format/WMSCapabilities.js#L205
+        var extension = '.unknown';
+        var editor;
+        var content;
 
-        const getLegendGraphicFormats = getMapFormats; //result.Capability.Request.GetLegendGraphic.Format;
-        vm.set('getLegendGraphicFormats', getLegendGraphicFormats);
+        switch (activeContainerId) {
 
-        if (getLegendGraphicFormats.length > 0) {
-            vm.set('getLegendGraphic.format', getLegendGraphicFormats[0]);
+            case '#xml':
+                extension = '.xml';
+                editor = me.xmlEditor;
+                break;
+            case '#json':
+                extension = '.json';
+                editor = me.jsonEditor;
+                break;
+            case '#html':
+                extension = '.html';
+                editor = me.htmlEditor;
+                break;
+            case '#imageOutput':
+                // this seems to simply open the image in a new tab
+                // may rely on the server setting the following header
+                // Content-Disposition: attachment;
+
+                //const container = me.getView().down(activeContainerId);
+                //const imageUrl = container.down('image').src;
+                //const lowercaseParams = me.queryStringToParams(imageUrl);
+
+                //if (lowercaseParams.format) {
+                //    var format = lowercaseParams.format;
+                //    var parts = format.split('/');
+
+                //    if (parts.length === 2) {
+                //        extension = "." + parts[1];
+                //    } else {
+                //        extension = "." + format;
+                //    }
+                //}
+                //content = imageUrl;
+                break;
+            default:
         }
 
-        const exceptions = result.Capability.Exception;
-        vm.set('exceptions', exceptions);
-
-        // get the root layer
-        const rootLayer = result.Capability.Layer;
-
-        // load projections
-        const projections = rootLayer.CRS ? rootLayer.CRS : rootLayer.SRS;
-        vm.set('projections', projections);
-
-        var bbox, crs;
-
-        if (rootLayer.BoundingBox && rootLayer.BoundingBox.length > 0) {
-            bbox = rootLayer.BoundingBox[0].extent;
-            crs = rootLayer.BoundingBox[0].crs;
-        } else {
-            bbox = rootLayer.EX_GeographicBoundingBox;
-            crs = 'EPSG:4326';
+        if (editor) {
+            content = editor.getValue();
+            content = 'data:text/plain;charset=utf-8,' + encodeURIComponent(content);
         }
 
-        // we can't use dot notation in the set method of a view model
-        // so update each item individually
-        vm.set('getMap.crs', crs);
-        vm.set('getMap.srs', crs);
-
-
-
-        if (exceptions.length > 0) {
-            vm.set('getMap.exceptions', exceptions[0]);
-            vm.set('describeLayer.exceptions', exceptions[0]);
-            vm.set('getFeatureInfo.exceptions', exceptions[0]);
-        }
-        vm.set('getMap.bbox', bbox.join(', '));
-
-        if (dataArrayWithFields.length > 0) {
-            vm.set('getLegendGraphic.layer', dataArrayWithFields[0].value);
+        if (content) {
+            var filename = 'mapserverstudio-ows' + extension;
+            me.downloadFile(filename, content);
         }
     },
 
@@ -254,10 +272,46 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         return requestParameters;
     },
 
+    onServerChange: function (textfield, newValue, oldValue) {
+        var me = this;
+
+        if (newValue !== oldValue) {
+
+            // mark all requet types in italic ("disabled") if the server URL
+            // is changed
+            const xType = me.getView().down('tabpanel').getActiveTab().xtype;
+            const vm = me.getView().down(xType).getViewModel();
+
+            const requestStore = vm.getStore('requests');
+
+            requestStore.each(function (record) {
+                if (record.get('name') !== 'GetCapabilities') {
+                    record.set('disabled', true);
+                }
+            });
+
+            // ensure any URLs don't have spaces entered at the end
+            if (newValue) {
+                textfield.setValue(newValue.trim());
+            }
+
+        }
+    },
+
     onSendRequest: function () {
         var me = this;
         const outputUrl = me.getViewModel().get('requestUrl');
         me.sendRequest(outputUrl);
+    },
+
+    queryStringToParams: function (url) {
+        const params = Ext.Object.fromQueryString(url);
+        const lowercaseParams = {};
+        Ext.Object.each(params, function (key, value) {
+            lowercaseParams[key.toLowerCase()] = value.toLowerCase();
+        });
+
+        return lowercaseParams;
     },
 
     sendRequest: function (outputUrl) {
@@ -287,11 +341,8 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
                 // if a GetCapabilities request was called then we update the UI
                 // with settings from the server
-                const params = Ext.Object.fromQueryString(outputUrl);
-                const lowercaseParams = {};
-                Ext.Object.each(params, function (key, value) {
-                    lowercaseParams[key.toLowerCase()] = value.toLowerCase();
-                });
+
+                const lowercaseParams = me.queryStringToParams(outputUrl);
 
                 if (lowercaseParams.request === 'getcapabilities') {
                     const service = lowercaseParams.service;
@@ -299,7 +350,8 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
                         case 'wms':
                             try {
-                                me.updateWmsCapabilities(responseText);
+                                const wmsCtrl = me.getView().down('ms_wmspanel').getController();
+                                wmsCtrl.updateWmsCapabilities.call(wmsCtrl, responseText);
                             } catch (e) {
                                 console.log(e);
                             }
@@ -335,7 +387,19 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
                     me.setEditorVisibilites('#imageOutput');
                     // for images set the src of the div to the server URL
                     // /this makes a second request to the server, but is more robust than converting to a dataUrl
-                    imageContainer.setHtml(`<img src="${outputUrl}" alt="OwS Generated Image">`);
+                    // imageContainer.setHtml(`<img src="${outputUrl}" alt="OwS Generated Image">`);
+
+                    imageContainer.removeAll();
+
+                    // using an Ext.Img makes it easier to get a reference later
+                    var image = Ext.create('Ext.Img', {
+                        src: outputUrl,
+                        alt: 'OwS Generated Image'
+                    });
+
+                    // Add the image to the container
+                    imageContainer.add(image);
+
                 }
             })
             .catch(error => {
