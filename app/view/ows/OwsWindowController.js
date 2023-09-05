@@ -257,7 +257,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
         // apply parameters for the service
 
-        // change the first character of the request type to lowercase to get the object
+        // change the first character of the request type to lowercase to get the object from the viewmodel
         var requestParametersDataName = requestType.charAt(0).toLowerCase() + requestType.slice(1);
         Ext.apply(requestParameters, Ext.clone(vm.get(requestParametersDataName)));
 
@@ -303,7 +303,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
     onSendRequest: function () {
         var me = this;
-        const outputUrl = me.getViewModel().get('requestUrl');
+        const outputUrl = me.getViewModel().get('requestUrl').trim();
         me.sendRequest(outputUrl);
     },
 
@@ -364,9 +364,11 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
                         case 'wms':
                             try {
+                                const version = lowerCaseParams.version;
                                 const wmsCtrl = me.getView().down('ms_wmspanel').getController();
-                                wmsCtrl.updateWmsCapabilities.call(wmsCtrl, responseText);
+                                wmsCtrl.updateWmsCapabilities.call(wmsCtrl, responseText, version);
                             } catch (e) {
+                                // add a toast pop-up for these errors?
                                 console.log(e);
                             }
                             break;
@@ -400,15 +402,18 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
                     // assume an image
                     me.setEditorVisibilites('#imageOutput');
                     // for images set the src of the div to the server URL
-                    // /this makes a second request to the server, but is more robust than converting to a dataUrl
-                    // imageContainer.setHtml(`<img src="${outputUrl}" alt="OwS Generated Image">`);
-
+                    // this makes a second request to the server, but is more robust than converting to a dataUrl
                     imageContainer.removeAll();
 
                     // using an Ext.Img makes it easier to get a reference later
                     var image = Ext.create('Ext.Img', {
                         src: outputUrl,
-                        alt: 'OwS Generated Image'
+                        alt: 'OwS Generated Image',
+                        style: {
+                            borderColor: 'gray',
+                            borderStyle: 'solid',
+                            borderWidth: '2px'
+                        }
                     });
 
                     // Add the image to the container
@@ -473,31 +478,6 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
             });
 
         }, 100);
-
-        //if (updatedLayerCombos.length > 0) {
-        //    me.updateLayerList(updatedLayerCombos);
-        //}
-
-    },
-
-    updateLayerList: function (layerCombos) {
-
-
-        const layerStore = Ext.getStore('layers');
-
-        Ext.each(layerCombos, function (cmb) {
-
-            if (layerStore.getCount() > 0) {
-                if (cmb.getXType() === 'multiselectfield') {
-                    // select all layers by default
-                    cmb.setValue(layerStore.collect('value'));
-                } else {
-                    // default to the first layer in the list
-                    cmb.setValue(layerStore.getAt(0).get('value'));
-                }
-            }
-        });
-
     },
 
     /**
@@ -516,16 +496,5 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
         const me = this;
         me.updateMultiSelectBindings();
-
-        //Ext.GlobalEvents.on({
-        //    mapLoaded: function (mapData) {
-
-        //        const view = me.getView();
-        //        const layerCombos = view.query('[name=layersCombo]:visible');
-
-        //        me.updateLayerList(layerCombos);
-        //        me.updateMapfileName(mapData);
-        //    }
-        //});
     }
 });

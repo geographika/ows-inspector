@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE WMT_MS_Capabilities SYSTEM "http://schemas.opengis.net/wms/1.1.0/capabilities_1_1_0.dtd"
+ [
+  <!ELEMENT VendorSpecificCapabilities EMPTY>
+]>
+<!-- end of DOCTYPE declaration -->
+
+<WMT_MS_Capabilities version="1.1.0">
+  <Service>
+    <Name>OGC:WMS</Name>
+    <Title>WMS Demo Server for MapServer</Title>
+    <Abstract>This demonstration server showcases MapServer (www.mapserver.org) and its OGC support</Abstract>
+    <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://demo.mapserver.org/cgi-bin/wms?"/>
+    <ContactInformation>
+      <ContactPersonPrimary>
+        <ContactPerson>Jeff McKenna</ContactPerson>
+        <ContactOrganization>Gateway Geomatics</ContactOrganization>
+      </ContactPersonPrimary>
+      <ContactPosition>Director</ContactPosition>
+      <ContactElectronicMailAddress>info@gatewaygeomatics.com</ContactElectronicMailAddress>
+    </ContactInformation>
+  </Service>
+
+  <Capability>
+    <Request>
+      <GetCapabilities>
+        <Format>application/vnd.ogc.wms_xml</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://demo.mapserver.org/cgi-bin/wms?"/>
+            </Get>
+            <Post>
+              <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://demo.mapserver.org/cgi-bin/wms?"/>
+            </Post>
+          </HTTP>
+        </DCPType>
+      </GetCapabilities>
+      <GetMap>
+        <Format>image/png</Format>
+        <Format>image/jpeg</Format>
+        <Format>image/png; mode=8bit</Format>
+        <Format>image/vnd.jpeg-png</Format>
+        <Format>image/vnd.jpeg-png8</Format>
+        <Format>application/x-pdf</Format>
+        <Format>image/svg+xml</Format>
+        <Format>image/tiff</Format>
+        <Format>application/vnd.google-earth.kml+xml</Format>
+        <Format>application/vnd.google-earth.kmz</Format>
+        <Format>application/vnd.mapbox-vector-tile</Format>
+        <Format>application/x-protobuf</Format>
+        <Format>application/json</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://demo.mapserver.org/cgi-bin/wms?"/>
+            </Get>
+            <Post>
+              <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://demo.mapserver.org/cgi-bin/wms?"/>
+            </Post>
+          </HTTP>
+        </DCPType>
+      </GetMap>
+      <GetFeatureInfo>
+        <Format>text/html</Format>
+        <Format>application/vnd.ogc.gml</Format>
+        <Format>text/plain</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://demo.mapserver.org/cgi-bin/wms?"/>
+            </Get>
+            <Post>
+              <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://demo.mapserver.org/cgi-bin/wms?"/>
+            </Post>
+          </HTTP>
+        </DCPType>
+      </GetFeatureInfo>
+      <DescribeLayer>
+        <Format>text/xml</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://demo.mapserver.org/cgi-bin/wms?"/>
+            </Get>
+            <Post>
+              <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://demo.mapserver.org/cgi-bin/wms?"/>
+            </Post>
+          </HTTP>
+        </DCPType>
+      </DescribeLayer>
+    </Request>
+    <Exception>
+      <Format>application/vnd.ogc.se_xml</Format>
+      <Format>application/vnd.ogc.se_inimage</Format>
+      <Format>application/vnd.ogc.se_blank</Format>
+    </Exception>
+    <VendorSpecificCapabilities />
+    <UserDefinedSymbolization SupportSLD="1" UserLayer="0" UserStyle="1" RemoteWFS="0"/>
+    <Layer queryable="1">
+      <Name>WMS_server</Name>
+      <Title>WMS Demo Server for MapServer</Title>
+      <Abstract>This demonstration server showcases MapServer (www.mapserver.org) and its OGC support</Abstract>
+      <SRS>EPSG:4326 EPSG:4269 EPSG:3978 EPSG:3857</SRS>
+      <LatLonBoundingBox minx="-180.000000" miny="-90.000000" maxx="180.000000" maxy="90.000000" />
+      <BoundingBox SRS="EPSG:4326"
+                  minx="-180.000000" miny="-90.000000" maxx="180.000000" maxy="90.000000" />
+      <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>bluemarble</Name>
+        <Title>Blue Marble World Elevation and Bathymetry Raster</Title>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="-180.000000" miny="-90.000000" maxx="180.000000" maxy="90.000000" />
+        <BoundingBox SRS="EPSG:4326"
+                    minx="-180.000000" miny="-90.000000" maxx="180.000000" maxy="90.000000" />
+        <Attribution>
+          <Title>NASA Blue Marble</Title>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://earthobservatory.nasa.gov/Features/BlueMarble/"/>
+        </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://demo.mapserver.org/cgi-bin/wms?request=GetMetadata&amp;layer=bluemarble"/>
+        </MetadataURL>
+      </Layer>
+      <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>continents</Name>
+        <Title>World continents</Title>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="-180.000000" miny="-90.000000" maxx="180.000000" maxy="83.627419" />
+        <BoundingBox SRS="EPSG:4326"
+                    minx="-180.000000" miny="-90.000000" maxx="180.000000" maxy="83.627419" />
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://demo.mapserver.org/cgi-bin/wms?request=GetMetadata&amp;layer=continents"/>
+        </MetadataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="121" height="112">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://demo.mapserver.org/cgi-bin/wms?version=1.1.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=continents&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>country_bounds</Name>
+        <Title>World country boundaries</Title>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="-180.000000" miny="-90.000000" maxx="180.000000" maxy="83.627419" />
+        <BoundingBox SRS="EPSG:4326"
+                    minx="-180.000000" miny="-90.000000" maxx="180.000000" maxy="83.627419" />
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://demo.mapserver.org/cgi-bin/wms?request=GetMetadata&amp;layer=country_bounds"/>
+        </MetadataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="142" height="23">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://demo.mapserver.org/cgi-bin/wms?version=1.1.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=country_bounds&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>cities</Name>
+        <Title>World cities</Title>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="-178.166667" miny="-54.800000" maxx="179.383333" maxy="78.933333" />
+        <BoundingBox SRS="EPSG:4326"
+                    minx="-178.166667" miny="-54.800000" maxx="179.383333" maxy="78.933333" />
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://demo.mapserver.org/cgi-bin/wms?request=GetMetadata&amp;layer=cities"/>
+        </MetadataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="192" height="41">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://demo.mapserver.org/cgi-bin/wms?version=1.1.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=cities&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+    </Layer>
+  </Capability>
+</WMT_MS_Capabilities>

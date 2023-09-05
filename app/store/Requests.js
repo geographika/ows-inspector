@@ -5,5 +5,11 @@ Ext.define('OwsInspector.store.Requests', {
         { name: 'name', type: 'string' },
         { name: 'disabled', type: 'boolean', defaultValue: false }
     ],
-    data: []
+    data: [],
+    filters: [
+        {
+            property: 'disabled',
+            value: false
+        }
+    ]
 });

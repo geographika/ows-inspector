@@ -31,3 +31,5 @@ Build Production Release
     $env:PATH += ";D:\Tools\Sencha\Cmd\7.5.1.20"
     cd $PROJECT_PATH
     sencha app build production
+
+

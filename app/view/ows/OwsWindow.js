@@ -93,24 +93,10 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
             items: [{
                 xtype: 'container',
                 itemId: 'blank',
-                html: `<h2>Welcome to the Open Web Services Inspector!</h2>
-                <ol>
-                <li>Select or enter a "Server URL" - the server must use <b>https</b></li>
-                <li>Click "Send Request" to load the capabilities from the server into the UI</li>
-                <li>Try other OwS requests!</li>
-                </ol>
-                `,
-                style: {
-                    backgroundColor: '#F5F5F5',
-                    padding: '10px',
-                    color: 'black',
-                    fontSize: 'large',
-                    //backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),url(/resources/images/watermark.png)',
-                    backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),url(/resources/images/vector_tiles.png)',
-                    //backgroundSize: 'cover',
-                    backgroundSize: 'contain',
-                    backgroundRepeat: 'no-repeat'
-                },
+                loader: {
+                    url: 'welcome.html',
+                    autoLoad: true
+                }
             }, {
                 xtype: 'container',
                 itemId: 'xml',
@@ -124,8 +110,8 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
             }, {
                 xtype: 'container',
                 visible: false,
+                scrollable: true,
                 itemId: 'imageOutput',
-                html: '<div id="imageOutput" style="width: 100%; height: 100%" />',
                 style: {
                     backgroundColor: 'white'
                 }

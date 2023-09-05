@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE WMT_MS_Capabilities SYSTEM "http://schemas.opengis.net/wms/1.0.0/capabilities_1_0_0.dtd"
+ [
+ <!ELEMENT VendorSpecificCapabilities EMPTY>
+ ]>  <!-- end of DOCTYPE declaration -->
+
+<WMT_MS_Capabilities version="1.0.0">
+<Service>
+  <Name>GetMap</Name>
+  <Title>WMS Demo Server for MapServer</Title>
+  <Abstract>This demonstration server showcases MapServer (www.mapserver.org) and its OGC support</Abstract>
+  <OnlineResource>https://demo.mapserver.org/cgi-bin/wms?</OnlineResource>
+</Service>
+
+<Capability>
+  <Request>
+    <Map>
+      <Format><PNG /><JPEG /><SVG /></Format>
+      <DCPType>
+        <HTTP>
+          <Get onlineResource="https://demo.mapserver.org/cgi-bin/wms?" />
+          <Post onlineResource="https://demo.mapserver.org/cgi-bin/wms?" />
+        </HTTP>
+      </DCPType>
+    </Map>
+    <Capabilities>
+      <Format><WMS_XML /></Format>
+      <DCPType>
+        <HTTP>
+          <Get onlineResource="https://demo.mapserver.org/cgi-bin/wms?" />
+          <Post onlineResource="https://demo.mapserver.org/cgi-bin/wms?" />
+        </HTTP>
+      </DCPType>
+    </Capabilities>
+    <FeatureInfo>
+      <Format><MIME /><GML.1 /></Format>
+      <DCPType>
+        <HTTP>
+          <Get onlineResource="https://demo.mapserver.org/cgi-bin/wms?" />
+          <Post onlineResource="https://demo.mapserver.org/cgi-bin/wms?" />
+        </HTTP>
+      </DCPType>
+    </FeatureInfo>
+  </Request>
+  <Exception>
+    <Format><BLANK /><INIMAGE /><WMS_XML /></Format>
+  </Exception>
+  <VendorSpecificCapabilities />
+  <Layer queryable="1">
+    <Name>WMS_server</Name>
+    <Title>WMS Demo Server for MapServer</Title>
+    <Abstract>This demonstration server showcases MapServer (www.mapserver.org) and its OGC support</Abstract>
+    <SRS>EPSG:4326 EPSG:4269 EPSG:3978 EPSG:3857</SRS>
+    <LatLonBoundingBox minx="-180.000000" miny="-90.000000" maxx="180.000000" maxy="90.000000" />
+    <BoundingBox SRS="EPSG:4326"
+                minx="-180.000000" miny="-90.000000" maxx="180.000000" maxy="90.000000" />
+    <Layer queryable="0">
+        <Name>bluemarble</Name>
+        <Title>Blue Marble World Elevation and Bathymetry Raster</Title>
+        <SRS>EPSG:4326</SRS>
+        <!-- WARNING: Optional LatLonBoundingBox could not be established for this layer.  Consider setting the EXTENT in the LAYER object, or wms_extent metadata. Also check that your data exists in the DATA statement -->
+    </Layer>
+    <Layer queryable="0">
+        <Name>continents</Name>
+        <Title>World continents</Title>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="-180.000000" miny="-90.000000" maxx="180.000000" maxy="83.627419" />
+        <BoundingBox SRS="EPSG:4326"
+                    minx="-180.000000" miny="-90.000000" maxx="180.000000" maxy="83.627419" />
+    </Layer>
+    <Layer queryable="0">
+        <Name>country_bounds</Name>
+        <Title>World country boundaries</Title>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="-180.000000" miny="-90.000000" maxx="180.000000" maxy="83.627419" />
+        <BoundingBox SRS="EPSG:4326"
+                    minx="-180.000000" miny="-90.000000" maxx="180.000000" maxy="83.627419" />
+    </Layer>
+    <Layer queryable="1">
+        <Name>cities</Name>
+        <Title>World cities</Title>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="-178.166667" miny="-54.800000" maxx="179.383333" maxy="78.933333" />
+        <BoundingBox SRS="EPSG:4326"
+                    minx="-178.166667" miny="-54.800000" maxx="179.383333" maxy="78.933333" />
+    </Layer>
+  </Layer>
+</Capability>
+</WMT_MS_Capabilities>
