@@ -82,7 +82,7 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelModel', {
                 { name: 'GetMap', disabled: true },
                 // TODO
                 // { name: 'GetFeatureInfo', disabled: true }
-            ],
+            ]
         }
     },
 

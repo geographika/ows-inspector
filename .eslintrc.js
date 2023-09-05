@@ -19,7 +19,20 @@ module.exports = {
         "LayerFactory": false,
         "GeoStylerSLDParser": false,
         "GeoStylerOpenlayersParser": false,
-        "auth0": false
+        "auth0": false,
+        "Jsonix": false,
+        "WMS_1_0_0": false,
+        "WMS_1_1_0": false,
+        "WMS_1_1_1": false,
+        "XLink_1_0": false,
+        "SE_1_1_0": false,
+        "SLD_1_1_0": false,
+        "GML_3_1_1": false,
+        "SMIL_2_0": false,
+        "SMIL_2_0_Language": false,
+        "Filter_1_1_0": false,
+        "WMS_1_3_0": false,
+        "OWS_1_0_0": false
     },
     "rules": {
         "no-trailing-spaces": "error",

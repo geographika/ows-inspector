@@ -9,9 +9,11 @@
   "author": "",
   "license": "GPL",
   "dependencies": {
+    "@ogc-schemas/ogc-schemas": "^3.0.0",
     "ace-builds": "^1.14.0",
-    "proj4": "^2.9.0",
-    "ol": "^7.5.0"
+    "jsonix": "^3.0.0",
+    "ol": "^7.5.0",
+    "proj4": "^2.9.0"
   },
   "devDependencies": {
     "eslint": "^8.29.0"

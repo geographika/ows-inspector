@@ -37,12 +37,12 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
             fieldLabel: 'Request',
             valueField: 'name',
             displayField: 'name',
-            listConfig: {
-                itemTpl: [
-                    '<div data-qtip="{[values.disabled ? "Call GetCapabilities before running other requests" : ""]}"',
-                    '  class="{[values.disabled ? "italic-text" : ""]}">{name}</div>'
-                ]
-            },
+            //listConfig: {
+            //    itemTpl: [
+            //        '<div data-qtip="{[values.disabled ? "Call GetCapabilities before running other requests" : ""]}"',
+            //        '  class="{[values.disabled ? "italic-text" : ""]}">{name}</div>'
+            //    ]
+            //},
             bind: {
                 store: '{requests}',
                 value: '{common.request}'
@@ -52,9 +52,9 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
     {
         xtype: 'fieldset',
         title: 'DescribeLayer',
-        collapsible: true,
+        collapsible: false,
         bind: {
-            collapsed: '{describeLayerDisabled}',
+            collapsed: '{describeLayerDisabled}'
         },
         items: [
             {
@@ -101,7 +101,7 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
     {
         xtype: 'fieldset',
         title: 'GetMap',
-        collapsible: true,
+        collapsible: false,
         bind: {
             collapsed: '{getMapDisabled}'
         },
@@ -195,7 +195,7 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
     {
         xtype: 'fieldset',
         title: 'GetLegendGraphic',
-        collapsible: true,
+        collapsible: false,
         bind: {
             collapsed: '{getLegendGraphicDisabled}'
         },
@@ -242,7 +242,7 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
     {
         xtype: 'fieldset',
         title: 'GetStyles',
-        collapsible: true,
+        collapsible: false,
         bind: {
             collapsed: '{getStylesDisabled}'
         },
@@ -264,9 +264,9 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
         xtype: 'fieldset',
         title: 'GetFeatureInfo',
         hidden: true,
-        collapsible: true,
+        collapsible: false,
         bind: {
-            collapsed: '{getFeatureInfoDisabled}'
+            collapsed: '{getFeatureInfoDisabled}',
         },
         items: [{
             xtype: 'multiselect',
