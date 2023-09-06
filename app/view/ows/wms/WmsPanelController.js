@@ -3,42 +3,6 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelController', {
 
     alias: 'controller.ms_wmspanel',
 
-    removeDocType: function (node) {
-
-        const me = this;
-
-        if (node.nodeType === 8) { // Comment node
-            node.parentNode.removeChild(node);
-        } else if (node.nodeType === 10) { // DocumentType (DOCTYPE) node
-            node.parentNode.removeChild(node);
-        } else if (node.nodeType === 3) { // DocumentType (DOCTYPE) node
-            node.parentNode.removeChild(node);
-        } else if (node.nodeType === 1) { // Element node
-            // Recursively remove DOCTYPE and comments from child elements
-            Ext.each(node.childNodes, function (childNode) {
-                me.removeDocType(childNode);
-            });
-        }
-    },
-
-    cleanXml: function (xmlText) {
-        // create an xmlDoc
-        const me = this;
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-
-        // remove text nodes from the root element
-        me.removeDocType(xmlDoc.documentElement);
-
-        // apply regex to remove text
-        xmlText = xmlText.replace(/<!DOCTYPE[^>]*>(\s*\[([^]]*|(?!\])])*])?>/gi, '').replace(/<!--[\s\S]*?-->/g, '');
-
-        // write back to string
-        xmlText = new XMLSerializer().serializeToString(xmlDoc);
-
-        return xmlText;
-    },
-
     convertXmlToJson: function (xmlText, schemas) {
 
         // Option to ignore XML elements that lack mapping info
@@ -49,6 +13,8 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelController', {
 
         // see https://stackoverflow.com/a/37058587
         // and https://github.com/highsource/jsonix/issues/145
+        // see https://github.com/landryb/MapStore2/commit/35f31b2 for MapServer vendor support
+        // https://github.com/georchestra/mapstore2-georchestra/issues/300
         var MapServerModule = {
             name: 'MapServerModule',
             typeInfos: [{
@@ -68,8 +34,20 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelController', {
                     localPart: 'GetStyles'
                 },
                 typeInfo: 'MapServerModule.AnyElementType'
+            },
+            // Element [{http://inspire.ec.europa.eu/schemas/inspire_vs/1.0}inspire_vs:ExtendedCapabilities] could not be unmarshalled
+            {
+                elementName: {
+                    namespaceURI: 'http://inspire.ec.europa.eu/schemas/inspire_vs/1.0',
+                    localPart: 'ExtendedCapabilities'
+                },
+                typeInfo: 'MapServerModule.AnyElementType'
             }]
         };
+
+        // also handle INPIRE schemas?
+        // https://github.com/geosolutions-it/MapStore2/issues/6489
+        // might just be simpler to use https://www.npmjs.com/package/xml2js
 
         schemas.push(MapServerModule);
 
@@ -87,9 +65,25 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelController', {
         return jsonMetadata;
     },
 
-    updateWmsCapabilities: function (xmlText, version) {
+    updateWmsCapabilities: function (xmlText) {
 
         const me = this;
+
+        // we can't trust that the GetCapabilities version returned from the server
+        // is the one requested - GeoServer for example returns 1.1.1 if 1.0.0 or 1.1.0
+        // is requested
+
+        // use a regex to get the version from the XML before parsing
+
+        const pattern = /\bversion="(1\.0\.0|1\.1\.0|1\.1\.1|1\.3\.0)"/;
+        const match = xmlText.match(pattern);
+        var version = '1.1.1'; // use 1.1.1 as a default version
+
+        if (match) {
+            version = match[1];
+        } else {
+            console.log('Version not found');
+        }
 
         var schemas = [];
 
@@ -225,13 +219,21 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelController', {
 
         var bbox, crs;
 
-        if (rootLayer.boundingBox) { // } && rootLayer.boundingBox.length > 0) {
+        // sometimes a bbox in a projection can be defined on a root layer
+        if (rootLayer.boundingBox) {
             bbox = rootLayer.boundingBox[0];
             bbox = [bbox.minx, bbox.miny, bbox.maxx, bbox.maxy];
             crs = rootLayer.boundingBox[0][prjType];
         } else {
-            bbox = rootLayer.exGeographicBoundingBox;
-            bbox = [bbox.westBoundLongitude, bbox.eastBoundLongitude, bbox.southBoundLatitude, bbox.northBoundLatitude];
+            // otherwise a bbox in EPSG:4326 is always defined
+            // 1.3.0 uses exGeographicBoundingBox whereas 1.1.1 uses latLonBoundingBox
+            var geographicBbox = rootLayer.exGeographicBoundingBox ? rootLayer.exGeographicBoundingBox : rootLayer.latLonBoundingBox;
+            bbox = [
+                geographicBbox.westBoundLongitude,
+                geographicBbox.eastBoundLongitude,
+                geographicBbox.southBoundLatitude,
+                geographicBbox.northBoundLatitude
+            ];
             crs = 'EPSG:4326';
         }
 
@@ -271,13 +273,8 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelController', {
         Ext.each(layerCombos, function (cmb) {
 
             if (layerStore.getCount() > 0) {
-                if (cmb.getXType() === 'multiselectfield') {
-                    // select all layers by default
-                    cmb.setValue(layerStore.collect('value'));
-                } else {
-                    // default to the first layer in the list
-                    cmb.setValue(layerStore.getAt(0).get('value'));
-                }
+                // default to the first layer in the list
+                cmb.setValue(layerStore.getAt(0).get('value'));
             }
         });
 
