@@ -94,7 +94,7 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
                 xtype: 'container',
                 itemId: 'blank',
                 loader: {
-                    url: 'welcome.html',
+                    url: '/resources/welcome.html',
                     autoLoad: true
                 }
             }, {

@@ -310,6 +310,10 @@
       "compress": false
     },
     {
+      "path": "./node_modules/ace-builds/src-min/worker-xml.js",
+      "compress": false
+    },
+    {
       "path": "./node_modules/ace-builds/src-min/mode-xml.js",
       "compress": false
     },
@@ -558,10 +562,6 @@
     {
       "path": "resources",
       "output": "shared"
-    },
-    {
-      "path": "welcome.html",
-      "output": ""
     }
   ],
 

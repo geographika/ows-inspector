@@ -364,9 +364,8 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
                         case 'wms':
                             try {
-                                const version = lowerCaseParams.version;
                                 const wmsCtrl = me.getView().down('ms_wmspanel').getController();
-                                wmsCtrl.updateWmsCapabilities.call(wmsCtrl, responseText, version);
+                                wmsCtrl.updateWmsCapabilities.call(wmsCtrl, responseText);
                             } catch (e) {
                                 // add a toast pop-up for these errors?
                                 console.log(e);

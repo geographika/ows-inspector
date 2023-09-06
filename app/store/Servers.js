@@ -25,6 +25,7 @@ Ext.define('OwsInspector.store.Servers', {
         { name: 'EPA Ireland', url: 'https://gis.epa.ie/geoserver/ows' },
         { name: 'European Marine Observation and Data Network Bathymetry WMS', url: 'https://ows.emodnet-bathymetry.eu/wms' },
         { name: 'Terrestris OWS Demo', url: 'https://ows-demo.terrestris.de/geoserver/osm/ows' },
+        { name: 'Service tuilé sur la région Auvergne-Rhone-Alpes du CRAIG', url: 'http://wms.craig.fr/ortho?' },
     ],
     // sorters: ['name']
 });
