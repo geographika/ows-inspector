@@ -173,8 +173,10 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
             xtype: 'button',
             text: 'Save Output',
             handler: 'onSave',
+            tooltip: 'Save the current output to a local file (for images right-click on the image and "Save As"',
             bind: {
-                scale: '{scale}'
+                scale: '{scale}',
+                disabled: '{disableSaveOutputButton}'
             }
         },
 

@@ -9,6 +9,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowModel', {
         mapserverUrl: 'https://demo.mapserver.org/cgi-bin/wms',
         requestUrl: '',
         isFloatingWindow: false,
+        activeContainerId: '#blank',
         scale: 'medium' // small
     },
 
@@ -28,6 +29,21 @@ Ext.define('OwsInspector.view.ows.OwsWindowModel', {
             get: function () {
                 const controller = this.getView().getController();
                 controller.onParametersUpdated.call(controller);
+            }
+        },
+
+        disableSaveOutputButton: {
+            bind: {
+                bindTo: '{activeContainerId}'
+            },
+            get: function (activeContainerId) {
+                if ((activeContainerId === '#imageOutput') ||
+                    (activeContainerId === '#blank')) {
+                    return true;
+                } else {
+                    return false;
+
+                }
             }
         }
     }

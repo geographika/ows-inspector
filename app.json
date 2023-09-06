@@ -354,6 +354,9 @@
       "path": "./node_modules/ol/ol.css"
     },
     {
+      "path": "./node_modules/@fontsource/fira-mono/400.css"
+    },
+    {
       "path": "./resources/application.css"
     },
     {

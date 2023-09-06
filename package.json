@@ -13,7 +13,8 @@
     "ace-builds": "^1.14.0",
     "jsonix": "^3.0.0",
     "ol": "^7.5.0",
-    "proj4": "^2.9.0"
+    "proj4": "^2.9.0",
+    "@fontsource/fira-mono": "^4.5.10"
   },
   "devDependencies": {
     "eslint": "^8.29.0"
