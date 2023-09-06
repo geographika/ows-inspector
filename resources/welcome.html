@@ -1,11 +1,41 @@
-<div style="height: 100%; background-color: #F5F5F5; padding: 10px; color: black; font-size: large;
+﻿<div style="height: 100%; background-color: #F5F5F5; padding: 10px; color: black; font-size: medium;
        background-image: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url(/resources/images/vector_tiles.png);
-       background-size: cover;">
+       background-size: cover; font-weight:lighter; font-family: Fira Mono,Helvetica Neue,Helvetica,Arial,sans-serif;">
 
-    <h2>Welcome to the Open Web Services Inspector!</h2>
+    <h2>Welcome to the Open Web Services Inspector!👋</h2>
+
+    <h3>🚀 Quick Start</h3>
     <ol>
         <li>Select or enter a "Server URL" - the server must use <b>https</b></li>
         <li>Click "Send Request" to load the capabilities from the server into the UI</li>
-        <li>Try other OwS requests!</li>
+        <li>Now try other requests such as <b>GetMap</b> or <b>DescribeLayer</b></li>
+        <li>XML and JSON output can be saved locally by clicking the <b>Save Output</b> button</li>
     </ol>
+
+    <h3>📖 About</h3>
+    <p>
+        OWS Inspector is an open source JavaScript web application for testing Open Web Service requests (such as WMS) against
+        geospatial servers created by <a href="https://geographika.net/" target="_blank">Seth Girvin</a>.
+        The source code is on <a href="https://github.com/geographika/ows-inspector" target="_blank">GitHub</a> - please
+        open <a href="https://github.com/geographika/ows-inspector/issues" target="_blank">any issues there</a>.
+        The project is written purely in JavaScript - no data is stored on this website (but requests may be logged on the servers used for testing).
+    </p>
+    <p>
+        This project was developed as a component of <a href="https://app.mapserverstudio.net/">MapServer Studio</a>. It will be
+        fully integrated into MapServer Studio to allow dynamically editing Mapfiles to configure and test OWS services.
+    </p>
+    <p>
+        If you find this project useful please consider <a href="https://github.com/sponsors/geographika/" target="_blank">sponsoring me</a>
+        or signing up for a <a href="https://mapserverstudio.net/">MapServer Studio</a> account. If you require
+        support for working with OGC web services or require MapServer development or support you can find my company
+        <a href="https://geographika.net/" target="_blank">Geographika Ltd.</a> listed on the
+        <a href="https://mapserver.org/community/service_providers.html" target="_blank">MapServer Service Providers</a> page.
+    </p>
+
+    <h3>🛠️ Coming Soon</h3>
+    <ul>
+        <li><b>WFS</b> - Web Feature Service requests</li>
+        <li><b>OGC Features API</b> requests</li>
+        <li><b>WCS</b> - Web Coverage Requests</li>
+    </ul>
 </div>

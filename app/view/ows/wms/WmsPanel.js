@@ -165,13 +165,16 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanel', {
             },
             {
                 xtype: 'combo',
-                forceSelection: true,
-                editable: false,
+                forceSelection: false,
+                editable: true,
                 fieldLabel: 'Exceptions',
                 bind: {
                     store: '{exceptions}',
                     value: '{getMap.exceptions}',
                     disabled: '{getMapDisabled}'
+                },
+                listeners: {
+                    render: 'onComboRender'
                 }
             },
             {

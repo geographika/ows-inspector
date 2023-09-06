@@ -103,27 +103,11 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
             container = me.getView().down(id);
             if (activeEditor === id) {
                 container.setVisible(true);
+                me.getViewModel().set('activeContainerId', id);
             } else {
                 container.setVisible(false);
             }
         });
-    },
-
-    getActiveContainerId: function () {
-
-        const me = this;
-        var container;
-        var activeContainerId;
-
-        Ext.each(me.editorContainerIds, function (id) {
-            container = me.getView().down(id);
-            if (container.isVisible() === true) {
-                activeContainerId = id;
-                return;
-            }
-        });
-
-        return activeContainerId;
     },
 
     onHelp: function () {
@@ -146,8 +130,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
     onSave: function () {
         const me = this;
-
-        const activeContainerId = me.getActiveContainerId();
+        const activeContainerId = me.getViewModel().get('activeContainerId');
 
         if (!activeContainerId) {
             return;
