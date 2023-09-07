@@ -20,7 +20,8 @@ Ext.define('OwsInspector.store.Servers', {
         }
     ],
     data: [
-        { name: 'MapServer Demo Server', url: 'https://demo.mapserver.org/cgi-bin/wms' },
+        { name: 'MapServer Demo WMS Server', url: 'https://demo.mapserver.org/cgi-bin/wms' },
+        { name: 'MapServer Demo WFS Server', url: 'https://demo.mapserver.org/cgi-bin/wfs' },
         { name: 'MapServer msautotest', url: 'https://demo.mapserver.org/cgi-bin/msautotest' },
         { name: 'EPA Ireland', url: 'https://gis.epa.ie/geoserver/ows' },
         { name: 'European Marine Observation and Data Network Bathymetry WMS', url: 'https://ows.emodnet-bathymetry.eu/wms' },
