@@ -15,11 +15,6 @@ module.exports = {
         "proj4": false,
         "BasiGX": false,
         "GeoExt": false,
-        "MapServerStudio": false,
-        "LayerFactory": false,
-        "GeoStylerSLDParser": false,
-        "GeoStylerOpenlayersParser": false,
-        "auth0": false,
         "Jsonix": false,
         "WMS_1_0_0": false,
         "WMS_1_1_0": false,
@@ -32,7 +27,15 @@ module.exports = {
         "SMIL_2_0_Language": false,
         "Filter_1_1_0": false,
         "WMS_1_3_0": false,
-        "OWS_1_0_0": false
+        "OWS_1_0_0": false,
+        "Filter_1_0_0": false,
+        "WFS_1_0_0": false,
+        "WFS_1_1_0": false,
+        "WFS_2_0": false,
+        "Filter_2_0": false,
+        "OWS_1_1_0": false,
+        "OWS_1_0_0": false,
+        "OwsInspector": false
     },
     "rules": {
         "no-trailing-spaces": "error",
