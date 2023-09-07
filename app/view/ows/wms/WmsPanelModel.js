@@ -71,7 +71,7 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelModel', {
             type: 'layers',
             data: [{ value: 'Example' }],
         },
-        // all requests are disabled (shown in italics) until GetCapabilities is called
+        // all requests are hidden until GetCapabilities is called
         requests: {
             type: 'requests',
             data: [
