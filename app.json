@@ -293,6 +293,18 @@
     {
       "path": "node_modules/@ogc-schemas/ogc-schemas/lib/SE_1_1_0.js"
     },
+    {
+      "path": "node_modules/@ogc-schemas/ogc-schemas/lib/WFS_1_0_0.js"
+    },
+    {
+      "path": "node_modules/@ogc-schemas/ogc-schemas/lib/WFS_1_1_0.js"
+    },
+    {
+      "path": "node_modules/@ogc-schemas/ogc-schemas/lib/WFS_2_0.js"
+    },
+    {
+      "path": "node_modules/@ogc-schemas/ogc-schemas/lib/Filter_2_0.js"
+    },
 
     // https://stackoverflow.com/questions/37215216/ace-editor-dropping-module-because-define-wasnt-a-string
     // dropping module because define wasn't a string.
