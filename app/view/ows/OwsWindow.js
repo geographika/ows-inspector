@@ -14,10 +14,6 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
     height: 600,
     maximizable: false,
     closable: false,
-    //bind: {
-    //    closable: '{isFloatingWindow}',
-    //},
-    //closeAction: 'hide',
     layout: 'border',
     items: [
         {
