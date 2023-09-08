@@ -328,12 +328,14 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         const centerRegion = me.getView().down('#center');
         centerRegion.mask('Sending request...');
 
+        console.log("Requesting: " + outputUrl)
         fetch(outputUrl)
             .then(response => {
                 var responseType = response.headers.get('content-type');
                 return response.text().then(responseText => ({ responseType, responseText }));
             })
             .then(result => {
+                console.log("Server responded successfully");
                 const { responseType, responseText } = result;
 
                 // if a GetCapabilities request was called then we update the UI
@@ -343,26 +345,26 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
                 if (lowerCaseParams.request === 'getcapabilities') {
                     const service = lowerCaseParams.service;
-                    switch (service) {
+                    var panelId;
 
+                    switch (service) {
                         case 'wms':
-                            try {
-                                const wmsCtrl = me.getView().down('ms_wmspanel').getController();
-                                wmsCtrl.updateWmsCapabilities.call(wmsCtrl, responseText);
-                            } catch (e) {
-                                // add a toast pop-up for these errors?
-                                console.log(e);
-                            }
+                            panelId = 'ms_wmspanel';
                             break;
                         case 'wfs':
-                            try {
-                                me.updateWfsCapabilities(responseText);
-                            } catch (e) {
-                                console.log(e);
-                            }
+                            panelId = 'ms_wfspanel';
                             break;
                         default:
                             console.log(`Service type ${service} unknown`);
+                    }
+
+                    try {
+                        if (panelId) {
+                            const ctrl = me.getView().down(panelId).getController();
+                            ctrl.updateCapabilities.call(ctrl, responseText);
+                        }
+                    } catch (e) {
+                        console.log(e);
                     }
                 }
 
@@ -397,10 +399,8 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
                             borderWidth: '2px'
                         }
                     });
-
                     // Add the image to the container
                     imageContainer.add(image);
-
                 }
             })
             .catch(error => {
@@ -462,6 +462,52 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         }, 100);
     },
 
+
+    onFormatCode: function () {
+
+        const me = this;
+        const activeContainerId = me.getViewModel().get('activeContainerId');
+
+        if (!activeContainerId) {
+            return;
+        }
+
+        switch (activeContainerId) {
+
+            case '#xml':
+                var editor = me.xmlEditor;
+                if (editor) {
+                    const content = editor.getValue();
+                    if (content) {
+                        // https://github.com/riversun/xml-beautify
+                        const prettyContent = new XmlBeautify().beautify(content, {
+                            indent: '  ',  //indent pattern like white spaces
+                            useSelfClosingElement: true //true:use self-closing element when empty element.
+                        });
+                        editor.setValue(prettyContent);
+                    }
+                }
+                break;
+            case '#json':
+                var editor = me.jsonEditor;
+                if (editor) {
+                    debugger;
+                    const content = editor.getValue();
+                    if (content) {
+                        const jsonObject = JSON.parse(content);
+                        var prettyContent = JSON.stringify(jsonObject, null, 4);
+                        editor.setValue(prettyContent);
+                    }
+                }
+                break;
+            case '#html':
+                break;
+            case '#imageOutput':
+                break;
+            default:
+        }
+    },
+
     /**
      * If the comboboxes were not visible when first bound, then try again when
      * they become visible on a new tab
@@ -478,5 +524,22 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
         const me = this;
         me.updateMultiSelectBindings();
+    },
+
+    init: function (view) {
+        // Capture a reference to the div element where you want to display Ext.log messages
+        const logTextArea = view.down('#logOutput');
+
+        // Store the original console.log function for later use
+        const originalConsoleLog = console.log;
+
+        // Override console.log with a custom function
+        console.log = function (message) {
+            // Call the original console.log function to ensure the message is still logged to the console
+            originalConsoleLog(message);
+
+            // Append the message to the logOutput div
+            logTextArea.setValue(logTextArea.getValue() + message + '\n');
+        };
     }
 });

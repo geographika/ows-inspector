@@ -1,10 +1,19 @@
 Ext.define('OwsInspector.view.ows.wfs.WfsPanelModel', {
     extend: 'Ext.app.ViewModel',
 
+    requires: [
+        'OwsInspector.store.Layers',
+        'OwsInspector.store.Requests'
+    ],
+
     alias: 'viewmodel.ms_wfspanel',
 
     data: {
 
+        serviceVersions: ['2.0.0', '1.1.0', '1.0.0'],
+        projections: ['EPSG:3857'],
+
+        // parameters used by all services
         common: {
             request: 'GetCapabilities',
             version: '2.0.0',
@@ -15,7 +24,7 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanelModel', {
         },
         describeFeatureType: {
             typeNames: '',
-            exceptions: 'xml'
+            exceptions: ''
         },
         getFeature: {
             typeNames: '',
@@ -26,8 +35,18 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanelModel', {
     },
 
     stores: {
-        layerNames: {
-            source: 'layers'
+        layers: {
+            type: 'layers',
+            data: [{ value: 'Example' }],
+        },
+        // all requests are hidden until GetCapabilities is called
+        requests: {
+            type: 'requests',
+            data: [
+                { name: 'GetCapabilities', disabled: false },
+                { name: 'DescribeFeatureType', disabled: true },
+                { name: 'GetFeature', disabled: true },
+            ]
         }
     },
 
