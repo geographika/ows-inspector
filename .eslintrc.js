@@ -16,6 +16,7 @@ module.exports = {
         "BasiGX": false,
         "GeoExt": false,
         "Jsonix": false,
+        "XmlBeautify": false,
         "WMS_1_0_0": false,
         "WMS_1_1_0": false,
         "WMS_1_1_1": false,

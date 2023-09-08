@@ -222,6 +222,9 @@
       "compress": false
     },
     {
+      "path": "node_modules/xml-beautify/dist/XmlBeautify.js"
+    },
+    {
       "path": "node_modules/w3c-schemas/lib/XLink_1_0.js"
     },
     {

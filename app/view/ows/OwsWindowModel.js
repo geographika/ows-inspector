@@ -6,7 +6,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowModel', {
     requires: ['OwsInspector.store.Servers'],
 
     data: {
-        mapserverUrl: 'https://demo.mapserver.org/cgi-bin/wms',
+        mapserverUrl: 'https://demo.mapserver.org/cgi-bin/wfs', // this will set the default server when the UI is first opened
         requestUrl: '',
         isFloatingWindow: false,
         activeContainerId: '#blank',
@@ -32,16 +32,16 @@ Ext.define('OwsInspector.view.ows.OwsWindowModel', {
             }
         },
 
-        disableSaveOutputButton: {
+        outputIsCode: {
             bind: {
                 bindTo: '{activeContainerId}'
             },
             get: function (activeContainerId) {
                 if ((activeContainerId === '#imageOutput') ||
                     (activeContainerId === '#blank')) {
-                    return true;
-                } else {
                     return false;
+                } else {
+                    return true;
 
                 }
             }

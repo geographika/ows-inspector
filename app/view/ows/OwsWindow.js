@@ -78,60 +78,91 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
                     listeners: {
                         parametersupdated: 'onParametersUpdated'
                     },
-                    hidden: true
+                    hidden: false
                 }]
         },
         {
-            xtype: 'panel',
+            xtype: 'tabpanel',
             region: 'center',
             itemId: 'center',
             layout: 'fit',
-            items: [{
-                xtype: 'container',
-                itemId: 'blank',
-                loader: {
-                    url: '/resources/welcome.html',
-                    autoLoad: true
-                }
-            }, {
-                xtype: 'container',
-                itemId: 'xml',
-                html: '<div id="xmlEditor" style="width: 100%; height: 100%" />',
-                style: {
-                    backgroundColor: 'white'
+            tabPosition: 'right',
+            style: {
+                backgroundColor: 'white'
+            },
+            items: [
+                {
+                    xtype: 'panel',
+                    layout: 'fit',
+                    tabConfig: {
+                        title: 'Output'
+                    },
+                    tbar: ['->',
+                        {
+                            text: 'Format',
+                            handler: 'onFormatCode',
+                            bind: {
+                                disabled: '{!outputIsCode}'
+                            }
+                        }
+                    ],
+                    items: [
+                        {
+                            xtype: 'container',
+                            itemId: 'blank',
+                            loader: {
+                                url: '/resources/welcome.html',
+                                autoLoad: true
+                            }
+                        }, {
+                            xtype: 'container',
+                            itemId: 'xml',
+                            html: '<div id="xmlEditor" style="width: 100%; height: 100%" />',
+                            listeners: {
+                                resize: 'onEditorResize'
+                            }
+                        }, {
+                            xtype: 'container',
+                            visible: false,
+                            scrollable: true,
+                            itemId: 'imageOutput',
+                        }, {
+                            xtype: 'container',
+                            itemId: 'json',
+                            html: '<div id="jsonEditor" style="width: 100%; height: 100%" />',
+                            listeners: {
+                                resize: 'onEditorResize'
+                            }
+                        }, {
+                            xtype: 'container',
+                            itemId: 'html',
+                            html: '<div id="htmlEditor" style="width: 100%; height: 100%" />',
+                            listeners: {
+                                resize: 'onEditorResize'
+                            }
+                        }
+                    ]
                 },
-                listeners: {
-                    resize: 'onEditorResize'
-                }
-            }, {
-                xtype: 'container',
-                visible: false,
-                scrollable: true,
-                itemId: 'imageOutput',
-                style: {
-                    backgroundColor: 'white'
-                }
-            }, {
-                xtype: 'container',
-                itemId: 'json',
-                html: '<div id="jsonEditor" style="width: 100%; height: 100%" />',
-                style: {
-                    backgroundColor: 'white'
+                {
+                    xtype: 'container',
+                    tabConfig: {
+                        title: 'Log'
+                    },
+                    layout: 'fit',
+                    items: [
+                        {
+                            xtype: 'textareafield',
+                            readOnly: true, // To prevent user input
+                            scrollable: 'both', // Enable vertical and horizontal scrolling
+                            value: 'Starting logging (this is recorded in your browser only)...\n',
+                            itemId: 'logOutput',
+                            style: {
+                                backgroundColor: 'white'
+                            },
+                        }
+                    ]
                 },
-                listeners: {
-                    resize: 'onEditorResize'
-                }
-            }, {
-                xtype: 'container',
-                itemId: 'html',
-                html: '<div id="htmlEditor" style="width: 100%; height: 100%" />',
-                style: {
-                    backgroundColor: 'white'
-                },
-                listeners: {
-                    resize: 'onEditorResize'
-                }
-            }]
+            ]
         }, {
             region: 'south',
             header: false,
@@ -172,7 +203,7 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
             tooltip: 'Save the current output to a local file (for images right-click on the image and "Save As"',
             bind: {
                 scale: '{scale}',
-                disabled: '{disableSaveOutputButton}'
+                disabled: '{!outputIsCode}'
             }
         },
 

@@ -14,6 +14,7 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanel', {
         padding: 5,
         defaults: {
             padding: 5,
+            width: '95%' // or comboboxes are slightly truncated
         }
     },
     items: [{
@@ -24,9 +25,9 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanel', {
             forceSelection: true,
             editable: false,
             fieldLabel: 'Version',
-            store: ['2.0.0', '1.1.0', '1.0.0'],
             bind: {
-                value: '{common.version}',
+                store: '{serviceVersions}',
+                value: '{common.version}'
             }
         },
         {
@@ -34,55 +35,39 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanel', {
             forceSelection: true,
             editable: false,
             fieldLabel: 'Request',
-            store: ['GetCapabilities', 'DescribeFeatureType', 'GetFeature'],
+            valueField: 'name',
+            displayField: 'name',
             bind: {
-                value: '{common.request}',
+                store: '{requests}',
+                value: '{common.request}'
             }
         }]
     },
     {
         xtype: 'fieldset',
         title: 'DescribeFeatureType',
-        collapsible: true,
+        collapsible: false,
         bind: {
             collapsed: '{describeFeatureTypeDisabled}',
         },
         items: [
-
             {
                 xtype: 'multiselect',
                 name: 'layersCombo', // required for automatic updating
                 forceSelection: true,
                 editable: false,
-                fieldLabel: 'TypeName(s)',
+                fieldLabel: 'TypeName(s) (use CTRL to select many)',
                 valueField: 'value',
-                width: 275, // need to set this to a large value to fill space?
+                width: '90%',
                 displayField: 'value',
                 queryMode: 'local',
                 valueProperty: '{describeFeatureType.typeNames}', // a custom property added so the value binding can be set once the store is loaded
                 bind: {
-                    store: '{layerNames}',
+                    store: '{layers}',
                     //value: 'describeFeatureType.typeNames}', // due to errors we bind this manually in the controller
                     disabled: '{describeFeatureTypeDisabled}'
                 }
             },
-
-            //{
-            //    xtype: 'combo',
-            //    name: 'layersCombo', // required for automatic updating
-            //    forceSelection: true,
-            //    editable: false,
-            //    fieldLabel: 'Layer',
-            //    valueField: 'value',
-            //    width: 275, // need to set this to a large value to fill space?
-            //    displayField: 'value',
-            //    queryMode: 'local',
-            //    bind: {
-            //        store: '{layerNames}',
-            //        value: '{describeFeatureType.layer}',
-            //        disabled: '{describeLayerDisabled}'
-            //    }
-            //},
             {
                 xtype: 'textfield',
                 editable: false,
@@ -94,11 +79,10 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanel', {
             },
         ]
     },
-
     {
         xtype: 'fieldset',
         title: 'GetFeature',
-        collapsible: true,
+        collapsible: false,
         bind: {
             collapsed: '{getFeatureDisabled}',
         },
@@ -108,14 +92,14 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanel', {
                 name: 'layersCombo', // required for automatic updating
                 forceSelection: true,
                 editable: false,
-                fieldLabel: 'TypeName(s)',
+                fieldLabel: 'TypeName(s) (use CTRL to select many)',
                 valueField: 'value',
-                width: 275,
+                width: '90%',
                 displayField: 'value',
                 queryMode: 'local',
                 valueProperty: '{getFeature.typeNames}',
                 bind: {
-                    store: '{layerNames}',
+                    store: '{layers}',
                     disabled: '{getFeatureDisabled}'
                 }
             },
