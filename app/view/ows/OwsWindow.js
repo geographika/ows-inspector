@@ -4,7 +4,8 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
         'OwsInspector.view.ows.OwsWindowModel',
         'OwsInspector.view.ows.OwsWindowController',
         'OwsInspector.view.ows.wms.WmsPanel',
-        'OwsInspector.view.ows.wfs.WfsPanel'
+        'OwsInspector.view.ows.wfs.WfsPanel',
+        'OwsInspector.view.ows.oafeat.FeaturesPanelModel'
     ],
     xtype: 'ms_owswindow',
     viewModel: 'ms_owswindow',
@@ -79,7 +80,18 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
                         parametersupdated: 'onParametersUpdated'
                     },
                     hidden: false
-                }]
+                },
+                {
+                    tabConfig: {
+                        title: 'OGC Features'
+                    },
+                    xtype: 'ms_ogcfeaturespanel',
+                    listeners: {
+                        parametersupdated: 'onParametersUpdated'
+                    },
+                    hidden: false
+                }
+            ]
         },
         {
             xtype: 'tabpanel',

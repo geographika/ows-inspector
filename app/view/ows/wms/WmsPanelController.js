@@ -68,13 +68,8 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelController', {
         const version = jsn.version;
 
         var layers = Ext.Array.pluck(jsn.capability.layer.layer, 'name');
-
-        // Convert the flat array into an array of objects with 'name' field
-        var dataArrayWithFields = layers.map(function (item) {
-            return { value: item };
-        });
-
-        me.updateLayerList(dataArrayWithFields);
+        var utils = OwsInspector.Utils;
+        utils.updateLayerList(me.getView(), layers);
 
         var getMapFormats;
 
@@ -190,8 +185,8 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelController', {
         }
         vm.set('getMap.bbox', bbox.join(','));
 
-        if (dataArrayWithFields.length > 0) {
-            vm.set('getLegendGraphic.layer', dataArrayWithFields[0].value);
+        if (layers.length > 0) {
+            vm.set('getLegendGraphic.layer', layers[0]);
         }
 
         // finally we can "enable" all other request types
@@ -200,24 +195,6 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelController', {
         requestStore.each(function (record) {
             record.set('disabled', false);
         }, me, { filtered: true });
-
-    },
-
-    updateLayerList: function (dataArrayWithFields) {
-
-        const me = this;
-        const layerCombos = me.getView().query('[name=layersCombo]');
-        const layerStore = me.getViewModel().getStore('layers');
-
-        layerStore.loadData(dataArrayWithFields);
-
-        Ext.each(layerCombos, function (cmb) {
-
-            if (layerStore.getCount() > 0) {
-                // default to the first layer in the list
-                cmb.setValue(layerStore.getAt(0).get('value'));
-            }
-        });
 
     },
 
@@ -230,10 +207,10 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelController', {
     },
 
     /**
-     * Apply any custom logic to parameters prior to sending a request
+     * Apply any custom logic to parameters prior to building a querystring
      * @param {any} params
      */
-    customProcessParameters: function (params) {
+    buildQueryString: function (params) {
 
         if (params.request.toLowerCase() === 'getmap') {
             if (params.version === '1.3.0') {
@@ -243,6 +220,6 @@ Ext.define('OwsInspector.view.ows.wms.WmsPanelController', {
             }
         }
 
-        return params;
+        return Ext.Object.toQueryString(params);
     }
 });

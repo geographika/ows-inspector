@@ -205,28 +205,44 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
         var me = this;
 
-        const xType = me.getView().down('tabpanel').getActiveTab().xtype;
-        const panel = me.getView().down(xType);
-        const params = me.getParams(panel);
-
-        // apply any further custom logic from the panel controller
-        const panelController = panel.getController();
-
-        if (panelController.customProcessParameters) {
-            panelController.customProcessParameters.call(panelController, params);
-        }
-
         const mapserverUrl = me.getViewModel().get('mapserverUrl');
 
         if (!mapserverUrl) {
             return '';
         }
 
-        var queryString = Ext.Object.toQueryString(params);
+        const xType = me.getViewModel().get('activeTab');
+        const panel = me.getView().down(xType);
+        const params = me.getParams(panel);
+
+        // apply any further custom logic from the panel controller
+        const panelController = panel.getController();
+
+        var queryString = '';
+        if (panelController.buildQueryString) {
+            queryString = panelController.buildQueryString.call(panelController, params);
+        }
+
+        var urlPath = '';
+        if (panelController.buildUrlPath) {
+            urlPath = panelController.buildUrlPath.call(panelController, params);
+        }
+
+        var outputUrl = mapserverUrl;
+
+        if (urlPath) {
+            if (Ext.String.endsWith(mapserverUrl, '/') === false) {
+                outputUrl = outputUrl + '/' + urlPath;
+            } else {
+                outputUrl = outputUrl + urlPath;
+            }
+        }
 
         // Append the new parameters to the URL, with a ? or & as appropriate
-        const separator = mapserverUrl.indexOf('?') === -1 ? '?' : '&';
-        const outputUrl = mapserverUrl + separator + queryString;
+        if (queryString) {
+            const separator = outputUrl.indexOf('?') === -1 ? '?' : '&';
+            outputUrl = outputUrl + separator + queryString;
+        }
 
         return outputUrl;
 
@@ -238,10 +254,10 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         const requestType = vm.get('common.request');
         const requestParameters = Ext.clone(vm.get('common')); // clone here or it is not a simple key-value object
 
-        // apply parameters for the service
-
         // change the first character of the request type to lowercase to get the object from the viewmodel
         var requestParametersDataName = requestType.charAt(0).toLowerCase() + requestType.slice(1);
+
+        // apply parameters for the service
         Ext.apply(requestParameters, Ext.clone(vm.get(requestParametersDataName)));
 
         // ensure any list parameters are converted to comma separated strings
@@ -262,19 +278,20 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
             // mark all request types in italic ("disabled") if the server URL
             // is changed
-            const xType = me.getView().down('tabpanel').getActiveTab().xtype;
-            const vm = me.getView().down(xType).getViewModel();
+            const xType = me.getViewModel().get('activeTab');
 
+            const vm = me.getView().down(xType).getViewModel();
             const requestStore = vm.getStore('requests');
 
-            requestStore.each(function (record) {
-                if (record.get('name') !== 'GetCapabilities') {
-                    record.set('disabled', true);
-                }
-            });
-
-            // set the combobox back to GetCapabilities
-            vm.set('common.request', 'GetCapabilities');
+            // for WMS and WFS we need to call GetCapabilities to populate the UI
+            if (xType !== 'ms_ogcfeaturespanel') {
+                requestStore.each(function (record) {
+                    if (record.get('name') !== 'GetCapabilities') {
+                        record.set('disabled', true);
+                    }
+                });
+                vm.set('common.request', 'GetCapabilities');
+            }
 
             // ensure any URLs don't have spaces entered at the end
             if (newValue) {
@@ -328,41 +345,32 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         const centerRegion = me.getView().down('#center');
         centerRegion.mask('Sending request...');
 
-        console.log("Requesting: " + outputUrl)
+        console.log('Requesting: ' + outputUrl);
         fetch(outputUrl)
             .then(response => {
                 var responseType = response.headers.get('content-type');
                 return response.text().then(responseText => ({ responseType, responseText }));
             })
             .then(result => {
-                console.log("Server responded successfully");
+                console.log('Server responded successfully');
                 const { responseType, responseText } = result;
 
-                // if a GetCapabilities request was called then we update the UI
+                // if a collections or GetCapabilities request was called then we update the UI
                 // with settings from the server
 
                 const lowerCaseParams = me.getQueryStringParamsFromUrl(outputUrl);
 
-                if (lowerCaseParams.request === 'getcapabilities') {
-                    const service = lowerCaseParams.service;
-                    var panelId;
-
-                    switch (service) {
-                        case 'wms':
-                            panelId = 'ms_wmspanel';
-                            break;
-                        case 'wfs':
-                            panelId = 'ms_wfspanel';
-                            break;
-                        default:
-                            console.log(`Service type ${service} unknown`);
-                    }
-
+                if (
+                    (lowerCaseParams.request === 'getcapabilities') ||
+                    (
+                        outputUrl.endsWith('collections') ||
+                        outputUrl.endsWith('collections/')
+                    )
+                ) {
                     try {
-                        if (panelId) {
-                            const ctrl = me.getView().down(panelId).getController();
-                            ctrl.updateCapabilities.call(ctrl, responseText);
-                        }
+                        const activeTab = me.getViewModel().get('activeTab');
+                        const ctrl = me.getView().down(activeTab).getController();
+                        ctrl.updateCapabilities.call(ctrl, responseText);
                     } catch (e) {
                         console.log(e);
                     }
@@ -377,6 +385,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
                     me.setEditorVisibilites('#json');
                     me.setupJsonEditor();
                     me.jsonEditor.getSession().doc.setValue(responseText);
+                    me.formatJson();
                 } else if (responseType.includes('html')) {
                     // some errors have a HTTP 200 success code but an HTML response
                     me.setEditorVisibilites('#html');
@@ -462,6 +471,37 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         }, 100);
     },
 
+    formatXml: function () {
+
+        const me = this;
+        const editor = me.xmlEditor;
+        if (editor) {
+            const content = editor.getValue();
+            if (content) {
+                // https://github.com/riversun/xml-beautify
+                const prettyContent = new XmlBeautify().beautify(content, {
+                    indent: '  ',  //indent pattern like white spaces
+                    useSelfClosingElement: true //true:use self-closing element when empty element.
+                });
+                editor.getSession().doc.setValue(prettyContent);
+            }
+        }
+
+    },
+
+    formatJson: function () {
+
+        const me = this;
+        const editor = me.jsonEditor;
+        if (editor) {
+            const content = editor.getValue();
+            if (content) {
+                const jsonObject = JSON.parse(content);
+                var prettyContent = JSON.stringify(jsonObject, null, 4);
+                editor.getSession().doc.setValue(prettyContent);
+            }
+        }
+    },
 
     onFormatCode: function () {
 
@@ -475,30 +515,10 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         switch (activeContainerId) {
 
             case '#xml':
-                var editor = me.xmlEditor;
-                if (editor) {
-                    const content = editor.getValue();
-                    if (content) {
-                        // https://github.com/riversun/xml-beautify
-                        const prettyContent = new XmlBeautify().beautify(content, {
-                            indent: '  ',  //indent pattern like white spaces
-                            useSelfClosingElement: true //true:use self-closing element when empty element.
-                        });
-                        editor.setValue(prettyContent);
-                    }
-                }
+                me.formatXml();
                 break;
             case '#json':
-                var editor = me.jsonEditor;
-                if (editor) {
-                    debugger;
-                    const content = editor.getValue();
-                    if (content) {
-                        const jsonObject = JSON.parse(content);
-                        var prettyContent = JSON.stringify(jsonObject, null, 4);
-                        editor.setValue(prettyContent);
-                    }
-                }
+                me.formatJson();
                 break;
             case '#html':
                 break;
@@ -512,12 +532,15 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
      * If the comboboxes were not visible when first bound, then try again when
      * they become visible on a new tab
      */
-    onTabChange: function () {
+    onTabChange: function (tabPanel, newTab) {
 
         const me = this;
         me.updateMultiSelectBindings();
         // also recalculate the URL based on the new service type
         me.onParametersUpdated();
+        // update the active panel in the viewmodel
+        me.getViewModel().set('activeTab', newTab.xtype);
+
     },
 
     initViewModel: function () {
