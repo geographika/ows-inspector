@@ -6,11 +6,15 @@ Ext.define('OwsInspector.view.ows.OwsWindowModel', {
     requires: ['OwsInspector.store.Servers'],
 
     data: {
-        mapserverUrl: 'https://demo.mapserver.org/cgi-bin/wfs', // this will set the default server when the UI is first opened
+        // https://demo.mapserver.org/cgi-bin/mapserv/localdemo/ogcapi/
+        // https://demo.mapserver.org/cgi-bin/wfs
+        // https://demo.mapserver.org/cgi-bin/wms
+        mapserverUrl: 'https://demo.mapserver.org/cgi-bin/wms', // this will set the default server when the UI is first opened
         requestUrl: '',
         isFloatingWindow: false,
         activeContainerId: '#blank',
-        scale: 'medium' // small
+        scale: 'medium', // small
+        activeTab: 'ms_wmspanel' // only updated when the tab is changed so set a default value
     },
 
     stores: {

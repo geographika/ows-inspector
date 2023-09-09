@@ -49,18 +49,12 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanelController', {
         const vm = me.getViewModel();
         const jsn = jsonMetadata.value;
 
-        //debugger;
+        var layers = Ext.Array.pluck(
+            Ext.Array.pluck(jsn.featureTypeList.featureType, 'name')
+            , 'localPart');
 
-        var layers = Ext.Array.pluck(Ext.Array.pluck(jsn.featureTypeList.featureType, 'name'), 'localPart');
-
-        // Convert the flat array into an array of objects with 'name' field
-        var dataArrayWithFields = layers.map(function (item) {
-            return { value: item };
-        });
-
-        me.updateLayerList(dataArrayWithFields);
-
-
+        var utils = OwsInspector.Utils;
+        utils.updateLayerList(me.getView(), layers);
 
         // finally we can "enable" all other request types
         const requestStore = vm.getStore('requests');
@@ -70,30 +64,11 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanelController', {
         }, me, { filtered: true });
     },
 
-
-    updateLayerList: function (dataArrayWithFields) {
-
-        const me = this;
-        const layerCombos = me.getView().query('[name=layersCombo]');
-        const layerStore = me.getViewModel().getStore('layers');
-
-        layerStore.loadData(dataArrayWithFields);
-
-        Ext.each(layerCombos, function (cmb) {
-
-            if (layerStore.getCount() > 0) {
-                // default to the first layer in the list
-                cmb.setValue(layerStore.getAt(0).get('value'));
-            }
-        });
-
-    },
-
     /**
-     * Apply any custom logic to parameters prior to sending a request
+     * Apply any custom logic to parameters prior to building a querystring
      * @param {any} params
      */
-    customProcessParameters: function (params) {
+    buildQueryString: function (params) {
 
         const request = params.request.toLowerCase();
         if (request === 'describefeaturetype' || request === 'getfeature') {
@@ -117,6 +92,8 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanelController', {
                 }
             }
         }
+
+        return Ext.Object.toQueryString(params);
     }
 
 });

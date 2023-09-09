@@ -4,6 +4,28 @@ Ext.define('OwsInspector.Utils', {
 
     singleton: true,
 
+    updateLayerList: function (view, layerList) {
+
+        // Convert the flat array into an array of objects with 'name' field
+        var dataArrayWithFields = layerList.map(function (item) {
+            return { value: item };
+        });
+
+        const layerCombos = view.query('[name=layersCombo]');
+        const layerStore = view.getViewModel().getStore('layers');
+
+        layerStore.loadData(dataArrayWithFields);
+
+        Ext.each(layerCombos, function (cmb) {
+
+            if (layerStore.getCount() > 0) {
+                // default to the first layer in the list
+                cmb.setValue(layerStore.getAt(0).get('value'));
+            }
+        });
+
+    },
+
     convertXmlToJson: function (xmlText, schemas) {
 
         // Option to ignore XML elements that lack mapping info
