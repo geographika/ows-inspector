@@ -17,32 +17,88 @@ Ext.define('OwsInspector.view.ows.oafeat.FeaturesPanel', {
             width: '95%' // or comboboxes are slightly truncated
         }
     },
-    items: [{
-        xtype: 'combo',
-        forceSelection: true,
-        editable: false,
-        fieldLabel: 'Request',
-        valueField: 'name',
-        displayField: 'name',
-        bind: {
-            store: '{requests}',
-            value: '{common.request}'
+    items: [
+
+        {
+            xtype: 'fieldset',
+            title: 'URL Path',
+            collapsible: false,
+            items: [{
+                xtype: 'combo',
+                forceSelection: true,
+                editable: false,
+                fieldLabel: 'Request',
+                valueField: 'name',
+                displayField: 'name',
+                bind: {
+                    store: '{requests}',
+                    value: '{common.request}'
+                }
+            },
+            {
+                xtype: 'combo',
+                name: 'layersCombo', // required for automatic updating
+                forceSelection: true,
+                editable: false,
+                fieldLabel: 'Layer',
+                itemId: 'layer',
+                displayField: 'value',
+                valueField: 'value',
+                queryMode: 'local',
+                bind: {
+                    store: '{layers}',
+                    value: '{apiRequest.layer}',
+                    //disabled: '{getLegendGraphicDisabled}'
+                }
+            }]
+        },
+        {
+            xtype: 'fieldset',
+            title: 'Query String Parameters',
+            collapsible: false,
+            //bind: {
+            //    collapsed: '{getFeatureDisabled}',
+            //},
+            items: [
+                {
+                    xtype: 'combo',
+                    forceSelection: true,
+                    editable: false,
+                    fieldLabel: 'Format',
+                    bind: {
+                        store: '{formats}',
+                        value: '{queryString.f}',
+                        //disabled: '{getMapDisabled}'
+                    },
+                    //listeners: {
+                    //    render: 'onComboRender'
+                    //}
+                },
+                {
+                    xtype: 'numberfield',
+                    fieldLabel: 'Limit',
+                    minValue: 0,
+                    width: 180,
+                    allowBlank: true,
+                    allowDecimals: false,
+                    bind: {
+                        value: '{queryString.limit}',
+                        //hidden: '{!useCount}'
+                    }
+                },
+                {
+                    xtype: 'numberfield',
+                    fieldLabel: 'Offset',
+                    minValue: 0,
+                    width: 180,
+                    allowBlank: true,
+                    allowDecimals: false,
+                    bind: {
+                        value: '{queryString.offset}',
+                        //hidden: '{useCount}'
+                    }
+                },
+            ]
         }
-    },
-    {
-        xtype: 'combo',
-        name: 'layersCombo', // required for automatic updating
-        forceSelection: true,
-        editable: false,
-        fieldLabel: 'Layer',
-        itemId: 'layer',
-        displayField: 'value',
-        valueField: 'value',
-        queryMode: 'local',
-        bind: {
-            store: '{layers}',
-            value: '{apiRequest.layer}',
-            //disabled: '{getLegendGraphicDisabled}'
-        }
-    }]
+    ]
 });

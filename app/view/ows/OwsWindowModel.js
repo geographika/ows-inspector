@@ -9,7 +9,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowModel', {
         // https://demo.mapserver.org/cgi-bin/mapserv/localdemo/ogcapi/
         // https://demo.mapserver.org/cgi-bin/wfs
         // https://demo.mapserver.org/cgi-bin/wms
-        mapserverUrl: 'https://demo.mapserver.org/cgi-bin/wms', // this will set the default server when the UI is first opened
+        mapserverUrl: 'https://demo.mapserver.org/cgi-bin/mapserv/localdemo/ogcapi/', // this will set the default server when the UI is first opened
         requestUrl: '',
         isFloatingWindow: false,
         activeContainerId: '#blank',
@@ -41,15 +41,33 @@ Ext.define('OwsInspector.view.ows.OwsWindowModel', {
                 bindTo: '{activeContainerId}'
             },
             get: function (activeContainerId) {
-                if ((activeContainerId === '#imageOutput') ||
-                    (activeContainerId === '#blank')) {
-                    return false;
-                } else {
+                if (
+                    (activeContainerId === '#json') ||
+                    (activeContainerId === '#xml')
+                ) {
                     return true;
+                } else {
+                    return false;
+
+                }
+            }
+        },
+
+        outputIsHtml: {
+            bind: {
+                bindTo: '{activeContainerId}'
+            },
+            get: function (activeContainerId) {
+                if (
+                    (activeContainerId === '#html')) {
+                    return true;
+                } else {
+                    return false;
 
                 }
             }
         }
+
     }
 
 });
