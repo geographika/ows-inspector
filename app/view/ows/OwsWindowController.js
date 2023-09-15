@@ -10,7 +10,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
     jsonEditor: null,
     htmlEditor: null,
 
-    editorContainerIds: ['#blank', '#imageOutput', '#xml', '#json', '#html'],
+    editorContainerIds: ['#blank', '#imageOutput', '#xml', '#json', '#html', '#htmlOutput'],
 
     onClose: function () {
         var me = this;
@@ -42,7 +42,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
             displayIndentGuides: false,
             highlightActiveLine: false,
             theme: theme,
-            readOnly: true,
+            //readOnly: true,
             wrap: true
         });
     },
@@ -153,6 +153,8 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
             case '#html':
                 extension = '.html';
                 editor = me.htmlEditor;
+                break;
+            case '#htmlOutput':
                 break;
             case '#imageOutput':
                 // this seems to simply open the image in a new tab
@@ -359,12 +361,13 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
                 // with settings from the server
 
                 const lowerCaseParams = me.getQueryStringParamsFromUrl(outputUrl);
+                const urlWithoutQueryString = outputUrl.split('?')[0];
 
                 if (
                     (lowerCaseParams.request === 'getcapabilities') ||
                     (
-                        outputUrl.endsWith('collections') ||
-                        outputUrl.endsWith('collections/')
+                        urlWithoutQueryString.endsWith('collections') ||
+                        urlWithoutQueryString.endsWith('collections/')
                     )
                 ) {
                     try {
@@ -444,6 +447,9 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
             });
     },
 
+    /**
+     * Update the multiselect combos with the layer lists
+     */
     updateMultiSelectBindings: function () {
 
         const me = this;
@@ -529,17 +535,37 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
     },
 
     /**
+     * Render HTML output into an iframe
+     */
+    onRenderHTML: function () {
+        const me = this;
+        const htmlPanel = me.getView().down('#htmlOutput');
+        if (me.htmlEditor) {
+            const content = me.htmlEditor.getValue();
+            if (content) {
+                me.setEditorVisibilites('#htmlOutput');
+                const html = `<iframe style='width: 100%; height: 100%' srcdoc='${content}'></iframe>`;
+                htmlPanel.update(html);
+            }
+        }
+    },
+
+    /**
      * If the comboboxes were not visible when first bound, then try again when
      * they become visible on a new tab
      */
     onTabChange: function (tabPanel, newTab) {
 
         const me = this;
-        me.updateMultiSelectBindings();
-        // also recalculate the URL based on the new service type
-        me.onParametersUpdated();
+
         // update the active panel in the viewmodel
         me.getViewModel().set('activeTab', newTab.xtype);
+
+        me.updateMultiSelectBindings();
+
+        // recalculate the URL based on the new service type
+        me.onParametersUpdated();
+
 
     },
 

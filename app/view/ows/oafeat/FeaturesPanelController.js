@@ -20,6 +20,26 @@ Ext.define('OwsInspector.view.ows.oafeat.FeaturesPanelController', {
     },
 
     /**
+     * Apply any custom logic to parameters prior to building a querystring
+     * @param {any} params
+     */
+    buildQueryString: function (/*params*/) {
+
+        const me = this;
+        const vm = me.getViewModel();
+
+        const qsParams = Ext.clone(vm.get('queryString'));
+
+        Ext.Object.each(qsParams, function (key, value) {
+            if (!value) {
+                delete qsParams[key];
+            }
+        });
+
+        return Ext.Object.toQueryString(qsParams);
+    },
+
+    /**
      * Build or modify the url path after the server URL
      * @param {any} params
      */
@@ -28,14 +48,14 @@ Ext.define('OwsInspector.view.ows.oafeat.FeaturesPanelController', {
         const me = this;
 
         const apiRequest = me.getViewModel().get('apiRequest');
-        //return params.request.toLowerCase();
+
         var path = '';
 
         if (params.request) {
-            path += '/collections';
+            path += params.request;
         }
 
-        if (apiRequest.layer) {
+        if (params.request === 'collections' && apiRequest.layer) {
             path += `/${apiRequest.layer}`;
         }
 

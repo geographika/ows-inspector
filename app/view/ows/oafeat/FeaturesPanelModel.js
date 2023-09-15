@@ -11,6 +11,8 @@ Ext.define('OwsInspector.view.ows.oafeat.FeaturesPanelModel', {
     data: {
         projections: ['EPSG:3857'],
 
+        formats: ['json', 'html'],
+
         // parameters used by all services
         common: {
             request: 'collections',
@@ -18,6 +20,14 @@ Ext.define('OwsInspector.view.ows.oafeat.FeaturesPanelModel', {
 
         apiRequest: {
             layer: ''
+        },
+
+        queryString: {
+            limit: 10,
+            offset: 0,
+            datetime: null,
+            f: 'json',
+            bbox: null
         }
     },
 
@@ -58,6 +68,17 @@ Ext.define('OwsInspector.view.ows.oafeat.FeaturesPanelModel', {
 
             bind: {
                 bindTo: '{apiRequest}',
+                deep: true,
+            },
+            get: function () {
+                this.onParametersUpdate();
+            }
+        },
+
+        queryStringChanged: {
+
+            bind: {
+                bindTo: '{queryString}',
                 deep: true,
             },
             get: function () {

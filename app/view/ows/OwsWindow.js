@@ -116,6 +116,13 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
                             bind: {
                                 disabled: '{!outputIsCode}'
                             }
+                        },
+                        {
+                            text: 'Render',
+                            handler: 'onRenderHTML',
+                            bind: {
+                                disabled: '{!outputIsHtml}'
+                            }
                         }
                     ],
                     items: [
@@ -138,6 +145,12 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
                             visible: false,
                             scrollable: true,
                             itemId: 'imageOutput',
+                        }, {
+                            xtype: 'panel',
+                            visible: false,
+                            layout: 'fit',
+                            scrollable: true,
+                            itemId: 'htmlOutput',
                         }, {
                             xtype: 'container',
                             itemId: 'json',
