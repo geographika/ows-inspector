@@ -89,7 +89,7 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
                     listeners: {
                         parametersupdated: 'onParametersUpdated'
                     },
-                    hidden: false
+                    hidden: true
                 }
             ]
         },

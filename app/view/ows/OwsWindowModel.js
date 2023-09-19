@@ -9,7 +9,8 @@ Ext.define('OwsInspector.view.ows.OwsWindowModel', {
         // https://demo.mapserver.org/cgi-bin/mapserv/localdemo/ogcapi/
         // https://demo.mapserver.org/cgi-bin/wfs
         // https://demo.mapserver.org/cgi-bin/wms
-        mapserverUrl: 'https://demo.mapserver.org/cgi-bin/mapserv/localdemo/ogcapi/', // this will set the default server when the UI is first opened
+        // 'https://demo.mapserver.org/cgi-bin/mapserv/localdemo/ogcapi/'
+        mapserverUrl: '', // this will set the default server when the UI is first opened
         requestUrl: '',
         isFloatingWindow: false,
         activeContainerId: '#blank',

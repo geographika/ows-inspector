@@ -87,20 +87,47 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanel', {
             collapsed: '{getFeatureDisabled}',
         },
         items: [
+            //{
+            //    xtype: 'multiselect',
+            //    name: 'layersCombo', // required for automatic updating
+            //    forceSelection: true,
+            //    editable: false,
+            //    fieldLabel: 'TypeName(s) (use CTRL to select many)',
+            //    valueField: 'value',
+            //    width: '90%',
+            //    displayField: 'value',
+            //    queryMode: 'local',
+            //    valueProperty: '{getFeature.typeNames}',
+            //    bind: {
+            //        store: '{layers}',
+            //        disabled: '{getFeatureDisabled}'
+            //    }
+            //},
             {
-                xtype: 'multiselect',
+                xtype: 'combo',
                 name: 'layersCombo', // required for automatic updating
                 forceSelection: true,
                 editable: false,
-                fieldLabel: 'TypeName(s) (use CTRL to select many)',
-                valueField: 'value',
-                width: '90%',
+                fieldLabel: 'TypeName',
                 displayField: 'value',
+                valueField: 'value',
                 queryMode: 'local',
-                valueProperty: '{getFeature.typeNames}',
                 bind: {
                     store: '{layers}',
-                    disabled: '{getFeatureDisabled}'
+                    value: '{getFeature.typeNames}',
+                }
+            },
+            {
+                xtype: 'combo',
+                forceSelection: true,
+                editable: false,
+                fieldLabel: 'OutputFormat',
+                displayField: 'outputFormat',
+                valueField: 'outputFormat',
+                queryMode: 'local',
+                bind: {
+                    store: '{outputFormats}',
+                    value: '{getFeature.outputFormat}',
                 }
             },
             {
