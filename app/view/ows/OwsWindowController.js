@@ -243,7 +243,10 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         // Append the new parameters to the URL, with a ? or & as appropriate
         if (queryString) {
             const separator = outputUrl.indexOf('?') === -1 ? '?' : '&';
-            outputUrl = outputUrl + separator + queryString;
+
+            // encode the URL prior to sending as if + isn't encoded e.g. application/gml+xml
+            // the request will convert these to empty spaces and fail
+            outputUrl = outputUrl + separator + encodeURIComponent(queryString);
         }
 
         return outputUrl;
@@ -330,6 +333,42 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         return lowerCaseParams;
     },
 
+    downloadFileFromResponse: function (response) {
+
+        const responseType = response.headers.get('content-type');
+        const contentDisposition = response.headers.get('content-disposition');
+
+        var extension = 'dat';
+
+        if (responseType.includes('zip')) {
+            extension = '.zip';
+        }
+
+        var filename = `download.${extension}`;
+
+        if (contentDisposition) {
+            // Find the part that starts with "filename="
+            const parts = contentDisposition.split('; ');
+            const filenamePart = parts.find(part => part.startsWith('filename='));
+
+            if (filenamePart) {
+                // Extract the filename by removing "filename=" from the part
+                filename = filenamePart.substring('filename='.length);
+            }
+        }
+        // Force download by creating a blob and a download link
+        response.blob().then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+
+    },
+
     sendRequest: function (outputUrl) {
 
         const me = this;
@@ -348,10 +387,31 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         centerRegion.mask('Sending request...');
 
         console.log('Requesting: ' + outputUrl);
+
         fetch(outputUrl)
             .then(response => {
-                var responseType = response.headers.get('content-type');
-                return response.text().then(responseText => ({ responseType, responseText }));
+
+                //const headerNames = response.headers.keys();
+                //console.log(Array.from(headerNames))
+
+                // only headers in the Access-Control-Allow-Headers can be accessed here
+                // Accept,Accept-Charset,Accept-Encoding,Accept-Language,Connection,Content-Type,Cookie,DNT,Host,
+                // Keep-Alive,Origin,Referer,User-Agent,X-CSRF-Token,X-Requested-With
+                // server needs to set Access-Control-Expose-Headers to allow this to be accessed
+                const responseType = response.headers.get('content-type');
+
+                // check for attachment downloads (from GetFeature requests)
+                const contentDisposition = response.headers.get('content-disposition');
+
+                if (
+                    (contentDisposition && contentDisposition.includes('attachment')) ||
+                    (responseType.includes('zip'))
+                ) {
+                    me.downloadFileFromResponse(response);
+                    return Promise.reject('Response was a data file');
+                } else {
+                    return response.text().then(responseText => ({ responseType, responseText }));
+                }
             })
             .then(result => {
                 console.log('Server responded successfully');
@@ -389,7 +449,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
                     me.setupJsonEditor();
                     me.jsonEditor.getSession().doc.setValue(responseText);
                     me.formatJson();
-                } else if (responseType.includes('html')) {
+                } else if (responseType.includes('html') || responseType.includes('text')) {
                     // some errors have a HTTP 200 success code but an HTML response
                     me.setEditorVisibilites('#html');
                     me.setupHtmlEditor();
@@ -416,10 +476,11 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
                 }
             })
             .catch(error => {
-                const response = error.response;
+
                 var errorHandled = false;
 
-                if (response) {
+                if (error.response) {
+                    const response = error.response;
                     var responseType = response.headers.get('content-type');
                     if (responseType && responseType.includes('xml')) {
                         imageContainer.setVisible(false);
@@ -436,9 +497,10 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
                     me.setEditorVisibilites('#json');
                     me.setupJsonEditor();
                     const doc = me.jsonEditor.getSession().doc;
-                    doc.setValue('Error occurred: ' + error.message);
+                    const errorMessage = error.message ? error.message : error;
+                    doc.setValue(errorMessage);
                     //<debug>
-                    Ext.log(error);
+                    Ext.log(errorMessage);
                     //</debug>
                 }
             })
@@ -550,6 +612,36 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         }
     },
 
+    filterServersByType: function (xtype) {
+
+        const me = this;
+        const vm = me.getViewModel();
+        const serverStore = vm.getStore('servers');
+
+        serverStore.clearFilter();
+        var service;
+
+        // Apply the filter to the store
+
+        switch (xtype) {
+
+            case 'ms_wmspanel':
+                service = 'WMS';
+                break;
+            case 'ms_wfspanel':
+                service = 'WFS';
+                break;
+            case 'ms_ogcfeaturespanel':
+                service = 'OAPIF';
+                break;
+            default:
+        }
+
+        if (service) {
+            serverStore.filterBy(record => serverStore.filterByService(record, service));
+        }
+    },
+
     /**
      * If the comboboxes were not visible when first bound, then try again when
      * they become visible on a new tab
@@ -557,9 +649,12 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
     onTabChange: function (tabPanel, newTab) {
 
         const me = this;
+        const vm = me.getViewModel();
 
         // update the active panel in the viewmodel
-        me.getViewModel().set('activeTab', newTab.xtype);
+        vm.set('activeTab', newTab.xtype);
+
+        me.filterServersByType(newTab.xtype);
 
         me.updateMultiSelectBindings();
 
@@ -576,6 +671,9 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
     },
 
     init: function (view) {
+
+        const me = this;
+
         // Capture a reference to the div element where you want to display Ext.log messages
         const logTextArea = view.down('#logOutput');
 
@@ -590,5 +688,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
             // Append the message to the logOutput div
             logTextArea.setValue(logTextArea.getValue() + message + '\n');
         };
+
+        me.filterServersByType('ms_wmspanel');
     }
 });

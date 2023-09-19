@@ -12,6 +12,12 @@ If you require support for working with OGC web services or require MapServer de
 [Geographika Ltd.](https://geographika.net/) listed on the [MapServer Service Providers](https://mapserver.org/community/service_providers.html)
 page.
 
+## Known Limitations
+
+A WFS service does support multiple layer names - see [here as an example](https://stackoverflow.com/questions/10931363/wfs-getfeature-with-multiple-layers-and-different-propertynames).
+The OWS Inspector UI only allows a single layer to be selected, to make it easier to select field names.
+Requests can always be manually edited in the URL panel before sending. 
+
 ## Development Setup
 
 * Download SenchaCmd from https://support.sencha.com/#download

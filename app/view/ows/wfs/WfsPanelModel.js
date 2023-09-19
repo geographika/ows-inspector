@@ -3,7 +3,8 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanelModel', {
 
     requires: [
         'OwsInspector.store.Layers',
-        'OwsInspector.store.Requests'
+        'OwsInspector.store.Requests',
+        'OwsInspector.store.OutputFormats'
     ],
 
     alias: 'viewmodel.ms_wfspanel',
@@ -29,6 +30,7 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanelModel', {
         getFeature: {
             typeNames: '',
             exceptions: 'xml',
+            outputFormat: null,
             count: 10,
             maxFeatures: 10
         }
@@ -36,8 +38,10 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanelModel', {
 
     stores: {
         layers: {
-            type: 'layers',
-            data: [{ value: 'Example' }],
+            type: 'layers'
+        },
+        outputFormats: {
+            type: 'outputFormats'
         },
         // all requests are hidden until GetCapabilities is called
         requests: {
@@ -87,6 +91,27 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanelModel', {
             },
             get: function () {
                 this.onParametersUpdate();
+            }
+        },
+
+        getFeatureTypeNameChanged: {
+
+            bind: {
+                bindTo: '{getFeature.typeNames}',
+                deep: true,
+            },
+            get: function (typeNames) {
+                const me = this;
+                const store = me.getStore('outputFormats');
+                if (typeNames) {
+                    store.filter({
+                        property: 'layer',
+                        value: typeNames,
+                    });
+                } else {
+                    store.clearFilter();
+                }
+
             }
         },
 

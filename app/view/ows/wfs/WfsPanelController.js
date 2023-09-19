@@ -56,6 +56,45 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanelController', {
         var utils = OwsInspector.Utils;
         utils.updateLayerList(me.getView(), layers);
 
+        const outputFormatsStore = vm.getStore('outputFormats');
+        outputFormatsStore.removeAll();
+
+        var layerName, outputFormats, serviceOutputFormats;
+
+        // get the outputformats at the GetFeature service level
+        var services = Ext.Array.findBy(jsn.operationsMetadata.operation, function (item) {
+            return item.name === 'GetFeature';
+        });
+
+        if (services && services.parameter) {
+            const outputFormat = Ext.Array.findBy(services.parameter, function (item) {
+                return item.name === 'outputFormat';
+            });
+            if (outputFormat && outputFormat.allowedValues && outputFormat.allowedValues.valueOrRange) {
+                serviceOutputFormats = Ext.Array.pluck(outputFormat.allowedValues.valueOrRange, 'value');
+            }
+        }
+
+        // add all outputFormats for each layer in the service
+        Ext.each(jsn.featureTypeList.featureType, function (ft) {
+            layerName = ft.name.localPart;
+
+            outputFormats = ft.outputFormats ? ft.outputFormats : ft.outputFormat;
+
+            if (!outputFormats && serviceOutputFormats) {
+                // use service defaults
+                Ext.each(serviceOutputFormats, function (format) {
+                    outputFormatsStore.add({ layer: layerName, outputFormat: format });
+                });
+            } else if (outputFormats) {
+                // use layer formats
+                Ext.each(outputFormats.format, function (format) {
+                    outputFormatsStore.add({ layer: layerName, outputFormat: format });
+                });
+            }
+
+        });
+
         // finally we can "enable" all other request types
         const requestStore = vm.getStore('requests');
         // set filtered to true to include filtered records in the update
@@ -79,6 +118,11 @@ Ext.define('OwsInspector.view.ows.wfs.WfsPanelController', {
         }
 
         if (params.request.toLowerCase() === 'getfeature') {
+
+            if (!params.outputFormat) {
+                delete params.outputFormat;
+            }
+
             if (params.version === '2.0.0') {
                 delete params.maxFeatures;
                 // if no numeric value is set then remove the parameter so all records can be returned
