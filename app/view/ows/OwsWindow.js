@@ -123,6 +123,23 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
                             bind: {
                                 disabled: '{!outputIsHtml}'
                             }
+                        },
+                        {
+                            xtype: 'splitbutton',
+                            text: 'Convert SLD',
+                            bind: {
+                                disabled: '{!outputIsSLD}'
+                            },
+                            menu: [
+                                {
+                                    text: 'to GeoStyler',
+                                    handler: 'onSldToGeoStyler',
+                                },
+                                {
+                                    text: 'to Mapbox Style',
+                                    handler: 'onSldToMapbox',
+                                }
+                            ]
                         }
                     ],
                     items: [
@@ -187,6 +204,21 @@ Ext.define('OwsInspector.view.ows.OwsWindow', {
                         }
                     ]
                 },
+                {
+                    xtype: 'container',
+                    itemId: 'styleOutput',
+                    tabConfig: {
+                        title: 'Style Output'
+                    },
+                    layout: 'fit',
+                    items: [
+                        {
+                            xtype: 'container',
+                            itemId: 'jsonStyle',
+                            html: '<div id="jsonStyleEditor" style="width: 100%; height: 100%" />'
+                        }
+                    ]
+                }
             ]
         }, {
             region: 'south',

@@ -8,6 +8,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
 
     xmlEditor: null,
     jsonEditor: null,
+    jsonStyleEditor: null,
     htmlEditor: null,
 
     editorContainerIds: ['#blank', '#imageOutput', '#xml', '#json', '#html', '#htmlOutput'],
@@ -20,7 +21,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
     onEditorResize: function () {
 
         var me = this;
-        const editors = [me.xmlEditor, me.jsonEditor];
+        const editors = [me.xmlEditor, me.jsonEditor, me.htmlEditor];
 
         Ext.each(editors, function (editor) {
             // bug where if the window is resized the bottom part
@@ -73,6 +74,20 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
         me.jsonEditor = ace.edit('jsonEditor');
         me.jsonEditor.getSession().setMode('ace/mode/json');
         me.setupEditor(me.jsonEditor);
+    },
+
+    setupJsonStyleEditor: function () {
+
+        var me = this;
+
+        if (me.jsonStyleEditor !== null) {
+            return;
+        }
+
+        // only active when tab is pressed
+        me.jsonStyleEditor = ace.edit('jsonStyleEditor');
+        me.jsonStyleEditor.getSession().setMode('ace/mode/json');
+        me.setupEditor(me.jsonStyleEditor);
     },
 
     setupHtmlEditor: function () {
@@ -506,6 +521,7 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
             })
             .finally(() => {
                 centerRegion.unmask();
+                me.getViewModel().set('lastRequestTimestamp', new Date().getTime());
             });
     },
 
@@ -609,6 +625,122 @@ Ext.define('OwsInspector.view.ows.OwsWindowController', {
                 const html = `<iframe style='width: 100%; height: 100%' srcdoc='${content}'></iframe>`;
                 htmlPanel.update(html);
             }
+        }
+    },
+
+    getEditorSLD: function () {
+
+        const me = this;
+        const editor = me.xmlEditor;
+
+        if (editor) {
+            const content = editor.getValue();
+            if (content.includes('StyledLayerDescriptor')) {
+                return content;
+            }
+        }
+
+        return null;
+
+    },
+
+    onSldToGeoStyler: function () {
+        const me = this;
+        me.outputStyle(false);
+    },
+
+    onSldToMapbox: function () {
+        const me = this;
+        me.outputStyle(true);
+    },
+
+    /**
+     * Convert SLD to either Mapbox style
+     * or raw GeoStyler output
+     * @param {any} sldString
+     * @param {any} toMapbox
+     */
+    convertSld: function (sldString, toMapbox) {
+
+        const me = this;
+
+        // assume SLD 1.1.0 until https://github.com/geostyler/geostyler-sld-parser/issues/696 is implemented
+        var sldParser = new GeoStylerSLDParser.SldStyleParser({ sldVersion: '1.1.0' });
+        const mapBoxParser = new GeoStylerMapboxParser.MapboxStyleParser();
+
+        sldParser.readStyle(sldString)
+            .then(function (gs) {
+
+                if (gs.errors) {
+                    console.log('Errors parsing the SLD: ' + gs.errors);
+
+                    Ext.toast({
+                        html: 'Please check the Log tab for details',
+                        title: 'Unable to Parse SLD',
+                        width: 200,
+                        align: 'br'
+                    });
+                    return;
+                }
+
+                var jsnOutput = gs.output;
+
+                if (toMapbox === true) {
+                    mapBoxParser.writeStyle(gs.output).then(function (mbStyle) {
+                        if (mbStyle.errors) {
+                            console.log('Errors writing the style: ' + mbStyle.errors);
+
+                            Ext.toast({
+                                html: 'Please check the Log tab for details',
+                                title: 'Unable to Create Style',
+                                width: 200,
+                                align: 'br'
+                            });
+
+                            return;
+                        } else {
+                            jsnOutput = mbStyle.output;
+                        }
+                    });
+                }
+
+                me.setupJsonStyleEditor();
+                jsnOutput = JSON.stringify(jsnOutput, null, 4);
+                me.jsonStyleEditor.getSession().doc.setValue(jsnOutput);
+            });
+    },
+
+    /**
+     * Output a style in the JSON Style editor
+     * @param {any} toMapbox
+     * @returns
+     */
+    outputStyle: function (toMapbox) {
+
+        const me = this;
+        var sldString = me.getEditorSLD();
+
+        if (!sldString) {
+            console.log('The editor does not currently contain SLD');
+            return;
+        }
+
+        const tabPanel = me.getView().down('#center');
+        const tab = tabPanel.down('#styleOutput');
+
+        if (tabPanel.getActiveTab().id === tab.id) {
+            me.convertSld(sldString, toMapbox);
+        } else {
+            // if the style output tab has not been activated then the DIV
+            // will not have been created and the Ace Editor cannot be created
+            // we switch to the tab and wait for it to be active
+            tabPanel.on('tabchange', function () {
+                me.convertSld(sldString, toMapbox);
+            }, me, {
+                single: true
+            });
+
+            tabPanel.setActiveTab(tab);
         }
     },
 

@@ -15,7 +15,8 @@ Ext.define('OwsInspector.view.ows.OwsWindowModel', {
         isFloatingWindow: false,
         activeContainerId: '#blank',
         scale: 'medium', // small
-        activeTab: 'ms_wmspanel' // only updated when the tab is changed so set a default value
+        activeTab: 'ms_wmspanel', // only updated when the tab is changed so set a default value
+        lastRequestTimestamp: null // a property that is updated whenever a new request is made that updates editor content
     },
 
     stores: {
@@ -67,8 +68,21 @@ Ext.define('OwsInspector.view.ows.OwsWindowModel', {
 
                 }
             }
-        }
+        },
 
+        outputIsSLD: {
+            bind: {
+                activeContainerId: '{activeContainerId}',
+                lastRequestTimestamp: '{lastRequestTimestamp}'
+            },
+            get: function (data) {
+                if (data.activeContainerId === '#xml') {
+                    var ctrl = this.getView().getController();
+                    return Boolean(ctrl.getEditorSLD.call(ctrl));
+                }
+                return false;
+            }
+        }
     }
 
 });

@@ -214,6 +214,18 @@
       "compress": false
     },
     {
+      "path": "./node_modules/geostyler-sld-parser/browser/sldStyleParser.iife.js",
+      "compress": false
+    },
+    {
+      "path": "./node_modules/geostyler-mapbox-parser/browser/mapboxStyleParser.js",
+      "compress": false
+    },
+    {
+      "path": "./node_modules/geostyler-openlayers-parser/browser/olStyleParser.iife.js",
+      "compress": false
+    },
+    {
       "path": "./node_modules/proj4/dist/proj4.js",
       "compress": false
     },

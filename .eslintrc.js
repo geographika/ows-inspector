@@ -36,7 +36,9 @@ module.exports = {
         "Filter_2_0": false,
         "OWS_1_1_0": false,
         "OWS_1_0_0": false,
-        "OwsInspector": false
+        "OwsInspector": false,
+        "GeoStylerSLDParser": false,
+        "GeoStylerMapboxParser": false
     },
     "rules": {
         "no-trailing-spaces": "error",
